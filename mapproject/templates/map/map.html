@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<!-- マップIDごとのページ -->
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>マイマップ</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <h1>マイマップID: {{ map_id }}</h1>
+    <div id="map" style="height: 90vh;"></div>
+
+    {% load static %}
+    <script>
+        const MAP_ID = "{{ map_id }}";  // ← Python → JSにマップIDを渡す
+    </script>
+    <script src="{% static 'map/app.js' %}"></script>
+</body>
+</html>

@@ -1,13 +1,8 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.template import loader
-
-# Create your views here.
 
 def index(request):
-    """
-    地図表示画面
-    """
+    return render(request, 'map/index.html')
 
-    template = loader.get_template('map/index.html')
-    return HttpResponse(template.render(None, request))
+def map_view(request, map_id):
+    context = {'map_id': map_id}
+    return render(request, 'map/map.html', context)  # ← これから作るテンプレート
