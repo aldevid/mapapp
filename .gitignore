@@ -1,0 +1,11 @@
+# macOS のシステムファイル
+.DS_Store
+
+# SQLite のデータベースファイル
+db.sqlite3
+
+# Python のキャッシュファイル
+__pycache__/
+*.pyc
+*.pyo
+
