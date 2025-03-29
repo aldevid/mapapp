@@ -8,3 +8,4 @@ __pycache__/
 # SQLiteデータベース（ローカル開発専用なら無視）
 db.sqlite3
 
+.DS_Store
