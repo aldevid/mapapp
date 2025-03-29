@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import CustomMap, Spot
 
-# Register your models here.
+admin.site.register(CustomMap)
+admin.site.register(Spot)
