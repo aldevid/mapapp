@@ -33,6 +33,7 @@ function getCsrfToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
+
 // ピン保存処理
 function saveSpot(lat, lng, button, markerId) {
     button.disabled = true;
@@ -108,7 +109,7 @@ fetch(`/map/${MAP_ID}/spots/`)
         });
     });
 
-// サイドバーのフォーム送信でスポット更新
+// sidebar add button
 document.getElementById('spot-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -143,3 +144,49 @@ document.getElementById('spot-form').addEventListener('submit', function(e) {
         setTimeout(() => sidebar.style.backgroundColor = "#f9f9f9", 500);
     });
 });
+
+// sidebar delete button
+document.getElementById('delete-spot-btn').addEventListener('click', function() {
+    const spotId = document.getElementById('sidebar').dataset.spotId;
+
+    if (!spotId || !confirm("このスポットを削除しますか？")) return;
+
+    fetch(`/map/${MAP_ID}/spots/${spotId}/delete/`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRFToken': getCsrfToken()
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'deleted') {
+            // 地図上のマーカー削除
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker && layer.spotData && layer.spotData.id == spotId) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            // サイドバー非表示にするなど
+            document.getElementById('sidebar').style.display = 'none';
+        }
+    });
+});
+// sidebar modify
+
+function toggleMapList() {
+    const list = document.getElementById('my-map-list');
+    const toggle = document.getElementById('my-map-toggle');
+  
+    if (list.style.display === 'none' || list.style.display === '') {
+      // 位置を計算して貼り付け
+      const rect = toggle.getBoundingClientRect();
+      list.style.top = `${rect.bottom}px`; // ボタンの真下に
+      list.style.left = `0px`;
+      list.style.display = 'block';
+      toggle.innerText = 'Myマップ ▴';
+    } else {
+      list.style.display = 'none';
+      toggle.innerText = 'Myマップ ▾';
+    }
+  }

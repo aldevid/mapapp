@@ -1,54 +1,87 @@
 <!DOCTYPE html>
-<!-- マップIDごとのページ -->
-<html>
+<html lang="ja">
 <head>
-
-    <meta charset='utf-8' />
-    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta charset="utf-8" />
     <title>マイマップ</title>
+
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     {% load static %}
     <link rel="stylesheet" href="{% static 'map/style.css' %}">
-
 </head>
 <body>
-    <div id="container">
-        <div id="map" style="height: 100vh;" ></div>
 
-        <div id="sidebar">
-            <form id="spot-form">
-                <label>名前</label><br>
-                <input type="text" id="spot-name"><br><br>
+  <div id="map"></div>
 
-                <label>ジャンル</label><br>
-                <select id="spot-genre">
-                    <option value="">選択してください</option>
-                    <option value="カフェ">カフェ</option>
-                    <option value="レストラン">レストラン</option>
-                    <option value="観光">観光</option>
-                    <option value="ショッピング">ショッピング</option>
-                    <option value="ホテル">ホテル</option>
-                    <option value="その他">その他</option>
-                </select><br><br>
+  <div id="sidebar">
+    <div id="sidebar-main">
+      <form id="spot-form">
+        <label>名前</label><br>
+        <input type="text" id="spot-name"><br><br>
 
-                <label>URL</label><br>
-                <input type="url" id="spot-url"><br><br>
+        <label>ジャンル</label><br>
+        <select id="spot-genre">
+          <option value="">選択してください</option>
+          <option value="カフェ">カフェ</option>
+          <option value="レストラン">レストラン</option>
+          <option value="観光">観光</option>
+          <option value="ショッピング">ショッピング</option>
+          <option value="ホテル">ホテル</option>
+          <option value="その他">その他</option>
+        </select><br><br>
 
-                <label>営業時間</label><br>
-                <input type="text" id="spot-hours"><br><br>
+        <label>URL</label><br>
+        <input type="url" id="spot-url"><br><br>
 
-                <label>メモ</label><br>
-                <textarea id="spot-memo" rows="4" cols="30"></textarea><br><br>
+        <label>営業時間</label><br>
+        <input type="text" id="spot-hours"><br><br>
 
-                <button type="submit">保存</button>
-            </form>
-        </div>
-    </div>>
-    
-    <script>
-        const MAP_ID = "{{ map_id }}";  
-    </script>
-    <script src="{% static 'map/app.js' %}"></script>
+        <label>メモ</label><br>
+        <textarea id="spot-memo" rows="4" cols="30"></textarea>
+
+        <button type="submit">保存</button>
+        <button type="button" id="delete-spot-btn" style="margin-top: 8px; margin-left: 130px;">削除</button>
+      </form>
+    </div>
+
+    <!-- 下部（常時表示＋展開式） -->
+    <div id="sidebar-footer">
+      <div id="my-map-toggle" onclick="toggleMapList()">Myマップ ▾</div>
+
+      <div id="my-map-list" style="display: none;">
+        {% for m in other_maps %}
+          <div class="map-card">
+            <a href="{% url 'map:map_view' m.id %}">{{ m.name }}</a>
+          </div>
+        {% empty %}
+          <p>他にマップはありません</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    const MAP_ID = "{{ map_id }}";
+
+    function toggleMapList() {
+      const list = document.getElementById('my-map-list');
+      const toggle = document.getElementById('my-map-toggle');
+
+      if (list.style.display === 'none' || list.style.display === '') {
+        list.style.display = 'block';
+        toggle.innerText = 'Myマップ ▴';
+      } else {
+        list.style.display = 'none';
+        toggle.innerText = 'Myマップ ▾';
+      }
+    }
+  </script>
+
+  <script src="{% static 'map/app.js' %}"></script>
 </body>
 </html>
