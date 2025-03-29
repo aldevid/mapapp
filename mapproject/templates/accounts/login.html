@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン</title>
+
+    {% load static %}  <!-- staticタグを読み込む -->
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>ログイン</h1>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_username">ユーザー名</label>
+            {{ form.username }}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_password">パスワード</label>
+            {{ form.password }}
+        </div>
+        
+        <button type="submit" class="btn-submit">ログイン</button>
+    </form>
+    <p>アカウントをお持ちでないですか？ <a href="{% url 'accounts:register' %}">新規登録</a></p>
+</body>
+</html>
