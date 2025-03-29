@@ -9,11 +9,23 @@ class CustomMap(models.Model):
         return self.name
 
 class Spot(models.Model):
+    GENERE_CHOICES = [
+        ('food', 'グルメ'),
+        ('cafe', 'カフェ'),
+        ('sightseeing', '観光'),
+        ('shopping', 'ショッピング'),
+        ('hotel', '宿泊'),
+        ('other', 'その他'),
+    ]
+    
     map = models.ForeignKey(CustomMap, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=True)
+    memo = models.TextField(blank=True)
+    genre = models.CharField(max_length=100, blank=True)
+    url = models.URLField(blank=True)
+    hours = models.CharField(max_length=100, blank=True)
     lat = models.FloatField()
     lng = models.FloatField()
-    memo = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -17,13 +17,30 @@
         <div id="map" style="height: 100vh;" ></div>
 
         <div id="sidebar">
-            <h2>スポット編集</h2>
             <form id="spot-form">
-                <label>名前：</label><br>
+                <label>名前</label><br>
                 <input type="text" id="spot-name"><br><br>
 
-                <label>メモ:</label><br>
+                <label>ジャンル</label><br>
+                <select id="spot-genre">
+                    <option value="">選択してください</option>
+                    <option value="カフェ">カフェ</option>
+                    <option value="レストラン">レストラン</option>
+                    <option value="観光">観光</option>
+                    <option value="ショッピング">ショッピング</option>
+                    <option value="ホテル">ホテル</option>
+                    <option value="その他">その他</option>
+                </select><br><br>
+
+                <label>URL</label><br>
+                <input type="url" id="spot-url"><br><br>
+
+                <label>営業時間</label><br>
+                <input type="text" id="spot-hours"><br><br>
+
+                <label>メモ</label><br>
                 <textarea id="spot-memo" rows="4" cols="30"></textarea><br><br>
+
                 <button type="submit">保存</button>
             </form>
         </div>

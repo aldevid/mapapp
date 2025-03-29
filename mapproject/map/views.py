@@ -59,5 +59,8 @@ def update_spot(request, map_id, spot_id):
     spot = Spot.objects.get(id=spot_id, map__id=map_id)
     spot.name = data.get('name', spot.name)
     spot.memo = data.get('memo', spot.memo)
+    spot.genre = data.get('genre', spot.genre)
+    spot.url = data.get('url', spot.url)
+    spot.hours = data.get('hours', spot.hours)
     spot.save()
     return JsonResponse({'status': 'updated'})
