@@ -2,19 +2,35 @@
 <!-- マップIDごとのページ -->
 <html>
 <head>
+
     <meta charset='utf-8' />
     <meta name="csrf-token" content="{{ csrf_token }}">
     <title>マイマップ</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'map/style.css' %}">
+
 </head>
 <body>
-    <h1>マイマップID: {{ map_id }}</h1>
-    <div id="map" style="height: 90vh;"></div>
+    <div id="container">
+        <div id="map" style="height: 100vh;" ></div>
 
-    {% load static %}
+        <div id="sidebar">
+            <h2>スポット編集</h2>
+            <form id="spot-form">
+                <label>名前：</label><br>
+                <input type="text" id="spot-name"><br><br>
+
+                <label>メモ:</label><br>
+                <textarea id="spot-memo" rows="4" cols="30"></textarea><br><br>
+                <button type="submit">保存</button>
+            </form>
+        </div>
+    </div>>
+    
     <script>
-        const MAP_ID = "{{ map_id }}";  // ← Python → JSにマップIDを渡す
+        const MAP_ID = "{{ map_id }}";  
     </script>
     <script src="{% static 'map/app.js' %}"></script>
 </body>
