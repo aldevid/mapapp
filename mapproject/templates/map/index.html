@@ -1,27 +1,27 @@
-<!-- templates/map/index.html -->
+<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>マップ作成</title>
+  <meta charset="utf-8">
+  <title>マップ作成</title>
 </head>
 <body>
-    <h1>マイマップを作る</h1>
-    <button id="createBtn">新しいマップを作成</button>
+  <h1>マイマップを作る</h1>
 
-    <script>
-        function generateId(length = 8) {
-            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-            let id = '';
-            for (let i = 0; i < length; i++) {
-                id += chars[Math.floor(Math.random() * chars.length)];
-            }
-            return id;
-        }
+  <!-- ★ ここが変更ポイント：フォームに変更 -->
+  <form method="POST" action="{% url 'map:create_map' %}">
+    {% load static %}
+    {% csrf_token %}
+    <input type="text" name="name" placeholder="マップの名前" required />
+    <button type="submit">マップを作成</button>
+  </form>
 
-        document.getElementById('createBtn').addEventListener('click', function () {
-            const id = generateId();
-            window.location.href = `/map/${id}/`;
-        });
-    </script>
+  <h2>作成済みのマップ一覧</h2>
+  <ul>
+    {% for m in maps %}
+      <li><a href="{% url 'map:map_view' m.id %}">{{ m.name }}</a></li>
+    {% empty %}
+      <li>まだマップがありません</li>
+    {% endfor %}
+  </ul>
 </body>
 </html>
