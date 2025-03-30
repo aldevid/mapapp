@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規登録</title>
+
+    {% load static %} <!--staticタグを読み込む-->
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>新規登録</h1>
+
+    {% if messages %}
+    <div class="alert">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_username">ユーザー名</label>
+            {{ form.username }}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_email">メールアドレス</label>
+            {{ form.email }}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_password1">パスワード</label>
+            {{ form.password1 }}
+            <small id="passwordHelp" class="form-text text-muted">
+                パスワードは8文字以上で、英数字を含む必要があります。
+            </small>
+        </div>
+        
+        <div class="form-group">
+            <label for="id_password2">パスワード確認</label>
+            {{ form.password2 }}
+        </div>
+        
+        <button type="submit" class="btn-submit">登録</button>
+    </form>
+    <p>すでにアカウントをお持ちですか？ <a href="{% url 'accounts:login' %}">ログイン</a></p>
+</body>
+</html>
