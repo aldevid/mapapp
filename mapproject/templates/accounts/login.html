@@ -11,6 +11,15 @@
 </head>
 <body>
     <h1>ログイン</h1>
+
+    {% if messages %}
+    <div class="alert">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <form method="post">
         {% csrf_token %}
         
