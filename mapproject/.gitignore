@@ -1,0 +1,3 @@
+# .DS_Store と .pyc ファイルを無視する
+*.DS_Store
+*.pyc
