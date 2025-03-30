@@ -6,27 +6,35 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // 地図クリックで仮ピン＋保存ボタン表示
+let currentTempMarker = null;
+
 map.on('click', function (e) {
     const { lat, lng } = e.latlng;
+
+    // 既存の仮ピンがあれば削除
+    if (currentTempMarker) {
+        map.removeLayer(currentTempMarker);
+        currentTempMarker = null;
+    }
+
+    // 新しい仮ピンを立てる
     const marker = L.marker([lat, lng]).addTo(map);
-    const markerId = marker._leaflet_id;
+    marker.isSaved = false;
+    marker.spotData = {
+        id: null,
+        lat, lng,
+        name: '',
+        memo: '',
+        genre: '', 
+        url: '',
+        hours: ''
+    };
 
-    const popupContent = `
-        <div style="text-align: center; min-width: 80px;">
-            <button class="save-btn" onclick="saveSpot(${lat}, ${lng}, this, ${markerId})">保存</button>
-        </div>
-    `;
-    marker.bindPopup(popupContent).openPopup();
+    currentTempMarker = marker;
 
-    marker.on('popupclose', function () {
-        if (!marker.isSaved) {
-            map.removeLayer(marker);
-        }
-    });
-
-    window._tempMarkers = window._tempMarkers || [];
-    window._tempMarkers[markerId] = marker;
+    openSidebarWithSpot(marker.spotData);
 });
+
 
 // CSRFトークン取得（Django用）
 function getCsrfToken() {
@@ -34,53 +42,10 @@ function getCsrfToken() {
 }
 
 
-// ピン保存処理
-function saveSpot(lat, lng, button, markerId) {
-    button.disabled = true;
-    button.innerText = "保存中...";
-
-    fetch(`/map/${MAP_ID}/spots/add/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCsrfToken()
-        },
-        body: JSON.stringify({
-            lat: lat,
-            lng: lng,
-            name: "📍スポット"
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === 'okay') {
-            button.innerText = "保存しました";
-            const marker = window._tempMarkers[markerId];
-            if (marker) {
-                marker.isSaved = true;
-                marker.spotData = {
-                    id: data.id,
-                    name: "📍スポット",
-                    memo: "",
-                    genre: "",
-                    url: "",
-                    hours: ""
-                };
-                marker.bindPopup("📍スポット");
-                marker.on('click', function () {
-                    openSidebarWithSpot(this.spotData);
-                });
-            }
-        } else {
-            button.innerText = "保存失敗";
-            button.disabled = false;
-        }
-    });
-}
 
 // サイドバーにスポット情報を表示
 function openSidebarWithSpot(spot) {
-    const sidebar = document.getElementById('sidebar');
+    const sidebar = document.getElementById('sidebar-main');
     sidebar.style.display = 'block';
 
     document.getElementById('spot-name').value = spot.name || '';
@@ -91,6 +56,7 @@ function openSidebarWithSpot(spot) {
 
     sidebar.dataset.spotId = spot.id;
 }
+
 
 // 初期ロード時に保存済みスポットを読み込む
 fetch(`/map/${MAP_ID}/spots/`)
@@ -109,45 +75,68 @@ fetch(`/map/${MAP_ID}/spots/`)
         });
     });
 
+    
+
 // sidebar add button
 document.getElementById('spot-form').addEventListener('submit', function(e) {
     e.preventDefault();
-
-    const spotId = document.getElementById('sidebar').dataset.spotId;
+  
+    const spotId = document.getElementById('sidebar-main').dataset.spotId;
     const name = document.getElementById('spot-name').value;
     const memo = document.getElementById('spot-memo').value;
     const genre = document.getElementById('spot-genre').value;
     const url = document.getElementById('spot-url').value;
     const hours = document.getElementById('spot-hours').value;
-
-    fetch(`/map/${MAP_ID}/spots/${spotId}/update/`, {
-        method: 'PUT',
-        headers: {
+  
+    if (!spotId || spotId === "null") {
+        if (!currentTempMarker) return;
+      
+        const { lat, lng } = currentTempMarker.getLatLng();
+      
+        fetch(`/map/${MAP_ID}/spots/add/`, {
+          method: 'POST',
+          headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': getCsrfToken()
+          },
+          body: JSON.stringify({ name, memo, genre, url, hours, lat, lng })
+        })
+        .then(res => res.json())
+        .then(data => {
+          location.reload(); // 保存後はとりあえずリロードでもOK
+        });      
+  
+    } else {
+      // ⭐️ 既存スポットを更新
+      fetch(`/map/${MAP_ID}/spots/${spotId}/update/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken()
         },
         body: JSON.stringify({ name, memo, genre, url, hours })
-    })
-    .then(res => res.json())
-    .then(data => {
-        // マップ上のポップアップとデータ更新
+      })
+      .then(res => res.json())
+      .then(data => {
+        // UI更新
         map.eachLayer(function(layer) {
-            if (layer instanceof L.Marker && layer.spotData && layer.spotData.id == spotId) {
-                layer.bindPopup(name);
-                layer.spotData = { id: spotId, name, memo, genre, url, hours };
-            }
+          if (layer instanceof L.Marker && layer.spotData && layer.spotData.id == spotId) {
+            layer.bindPopup(name);
+            layer.spotData = { id: spotId, name, memo, genre, url, hours };
+          }
         });
-
-        // 軽い保存完了フィードバック
-        const sidebar = document.getElementById('sidebar');
+  
+        const sidebar = document.getElementById('sidebar-main');
         sidebar.style.backgroundColor = "#d1ffd1";
         setTimeout(() => sidebar.style.backgroundColor = "#f9f9f9", 500);
-    });
-});
+      });
+    }
+  });
+  
 
 // sidebar delete button
 document.getElementById('delete-spot-btn').addEventListener('click', function() {
-    const spotId = document.getElementById('sidebar').dataset.spotId;
+    const spotId = document.getElementById('sidebar-main').dataset.spotId;
 
     if (!spotId || !confirm("このスポットを削除しますか？")) return;
 
@@ -160,33 +149,56 @@ document.getElementById('delete-spot-btn').addEventListener('click', function() 
     .then(res => res.json())
     .then(data => {
         if (data.status === 'deleted') {
-            // 地図上のマーカー削除
             map.eachLayer(layer => {
                 if (layer instanceof L.Marker && layer.spotData && layer.spotData.id == spotId) {
                     map.removeLayer(layer);
                 }
             });
 
-            // サイドバー非表示にするなど
-            document.getElementById('sidebar').style.display = 'none';
+            document.getElementById('sidebar-main').style.display = 'none';
+
         }
     });
 });
 // sidebar modify
 
+
+// 展開/非表示処理（そのままでOK）
 function toggleMapList() {
-    const list = document.getElementById('my-map-list');
-    const toggle = document.getElementById('my-map-toggle');
-  
-    if (list.style.display === 'none' || list.style.display === '') {
-      // 位置を計算して貼り付け
-      const rect = toggle.getBoundingClientRect();
-      list.style.top = `${rect.bottom}px`; // ボタンの真下に
-      list.style.left = `0px`;
-      list.style.display = 'block';
-      toggle.innerText = 'Myマップ ▴';
-    } else {
-      list.style.display = 'none';
-      toggle.innerText = 'Myマップ ▾';
-    }
+  const list = document.getElementById('my-map-list');
+  const toggle = document.getElementById('my-map-toggle');
+  if (list.style.display === 'none' || list.style.display === '') {
+    list.style.display = 'block';
+    toggle.innerText = 'Myマップ ▴';
+  } else {
+    list.style.display = 'none';
+    toggle.innerText = 'Myマップ ▾';
   }
+}
+// 作成フォーム表示
+document.getElementById('show-create-map-form').addEventListener('click', () => {
+  const form = document.getElementById('create-map-form');
+  form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
+});
+// Ajaxでマップ作成
+document.getElementById('submit-new-map').addEventListener('click', () => {
+  const name = document.getElementById('new-map-name').value;
+  if (!name.trim()) {
+    alert('マップ名を入力してください');
+    return;
+  }
+  fetch("{% url 'map:create_map' %}", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+    },
+    body: `name=${encodeURIComponent(name)}`
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === 'ok') {
+      window.location.href = `/map/${data.map_id}/`;
+    }
+  });
+});

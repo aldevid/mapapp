@@ -1,24 +1,49 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="utf-8" />
-    <title>マイマップ</title>
+  <meta charset="utf-8" />
+  <title>マイマップ</title>
+  <meta name="csrf-token" content="{{ csrf_token }}">
 
-    <meta name="csrf-token" content="{{ csrf_token }}">
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'map/style.css' %}">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'map/style.css' %}">
 </head>
 <body>
 
   <div id="map"></div>
 
   <div id="sidebar">
-    <div id="sidebar-main">
+    <!-- mymap button -->
+      <div id="sidebar-footer">
+        <div id="my-map-toggle" onclick="toggleMapList()">Myマップ ▾</div>
+        <div id="my-map-list" style="display: none;">
+          <!-- マップ作成ボタン -->
+          <div style="margin-bottom: 10px;">
+            <button id="show-create-map-form" style="width: 100%;">＋ 新しいマップを作成</button>
+          </div>
+  
+          <!-- 入力フォーム（非表示） -->
+          <div id="create-map-form" style="display: none; margin-bottom: 15px;">
+            <input type="text" id="new-map-name" placeholder="マップ名" style="width: 100%; margin-bottom: 5px;">
+            <button id="submit-new-map" style="width: 100%;">作成する</button>
+          </div>
+  
+          <!-- マップ一覧 -->
+          {% for m in other_maps %}
+            <div class="map-card">
+              <a href="{% url 'map:map_view' m.id %}">{{ m.name }}</a>
+            </div>
+          {% empty %}
+            <p>他にマップはありません</p>
+          {% endfor %}
+        </div>
+      </div>
+      <!-- sidebar -->
+    <div id="sidebar-main" style="display: none;">
       <form id="spot-form">
         <label>名前</label><br>
         <input type="text" id="spot-name"><br><br>
@@ -41,47 +66,21 @@
         <input type="text" id="spot-hours"><br><br>
 
         <label>メモ</label><br>
-        <textarea id="spot-memo" rows="4" cols="30"></textarea>
+        <textarea id="spot-memo" rows="4" cols="30"></textarea><br><br>
 
         <button type="submit">保存</button>
         <button type="button" id="delete-spot-btn" style="margin-top: 8px; margin-left: 130px;">削除</button>
       </form>
     </div>
 
-    <!-- 下部（常時表示＋展開式） -->
-    <div id="sidebar-footer">
-      <div id="my-map-toggle" onclick="toggleMapList()">Myマップ ▾</div>
-
-      <div id="my-map-list" style="display: none;">
-        {% for m in other_maps %}
-          <div class="map-card">
-            <a href="{% url 'map:map_view' m.id %}">{{ m.name }}</a>
-          </div>
-        {% empty %}
-          <p>他にマップはありません</p>
-        {% endfor %}
-      </div>
-    </div>
   </div>
 
-  <!-- JavaScript -->
   <script>
-    const MAP_ID = "{{ map_id }}";
-
-    function toggleMapList() {
-      const list = document.getElementById('my-map-list');
-      const toggle = document.getElementById('my-map-toggle');
-
-      if (list.style.display === 'none' || list.style.display === '') {
-        list.style.display = 'block';
-        toggle.innerText = 'Myマップ ▴';
-      } else {
-        list.style.display = 'none';
-        toggle.innerText = 'Myマップ ▾';
-      }
-    }
+    const MAP_ID = "{{ map_id|default:'' }}";
+    const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   </script>
 
+  <script src="{% static 'map/mapList.js' %}"></script>
   <script src="{% static 'map/app.js' %}"></script>
 </body>
 </html>

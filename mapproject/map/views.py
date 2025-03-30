@@ -23,13 +23,22 @@ def map_view(request, map_id):
         'map_id': map_id,
     })
 
+def default_map_view(request):
+    spots = Spot.objects.all()
+    maps = CustomMap.objects.order_by('-created_at')
+    return render(request, 'map/default_map.html', {
+        'spots': spots,
+        'all_maps': maps,
+    })
+
 
 def create_map(request):
     if request.method == 'POST':
         name = request.POST['name']
         map_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
         CustomMap.objects.create(id=map_id, name=name)
-        return redirect('map:map_view', map_id=map_id)
+        return JsonResponse({'status': 'ok', 'map_id': map_id}) 
+
 
 def add_spot(request, map_id):
     if request.method == 'POST':
