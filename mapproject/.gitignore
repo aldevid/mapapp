@@ -1,0 +1,9 @@
+# MacOSの不要ファイル
+.DS_Store
+
+# Pythonのキャッシュファイル
+__pycache__/
+*.pyc
+
+# SQLiteデータベース（ローカル開発専用なら無視）
+db.sqlite3

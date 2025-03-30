@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>マップ作成</title>
+</head>
+<body>
+  <h1>マイマップを作る</h1>
+
+  <!-- ★ ここが変更ポイント：フォームに変更 -->
+  <form method="POST" action="{% url 'map:create_map' %}">
+    {% load static %}
+    {% csrf_token %}
+    <input type="text" name="name" placeholder="マップの名前" required />
+    <button type="submit">マップを作成</button>
+  </form>
+
+  <h2>作成済みのマップ一覧</h2>
+  <ul>
+    {% for m in maps %}
+      <li><a href="{% url 'map:map_view' m.id %}">{{ m.name }}</a></li>
+    {% empty %}
+      <li>まだマップがありません</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
