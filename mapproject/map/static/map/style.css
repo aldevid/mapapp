@@ -49,6 +49,7 @@ html, body {
 #sidebar-footer {
   padding: 10px;
   background-color: #ddd;
+  position: relative;
 }
 
 #my-map-toggle {
@@ -65,7 +66,9 @@ html, body {
 
 #my-map-list {
   position: absolute;
-  width: 250px;
+  top: 100%;
+  left: 0;
+  
   background-color: white;
   border-top: 1px solid #ccc;
   max-height: 30vh;
@@ -73,8 +76,6 @@ html, body {
   z-index: 1000;
   box-shadow: 0px 3px 6px rgba(0,0,0,0.15);
 }
-
-
 
 /* card style */
 .map-card {
@@ -95,3 +96,6 @@ html, body {
 .map-card:hover {
   background-color: #e6f7ff;
 }
+
+
+

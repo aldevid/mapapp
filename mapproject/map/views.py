@@ -15,7 +15,7 @@ def index(request):
 def map_view(request, map_id):
     custom_map = get_object_or_404(CustomMap, id=map_id)
     spots = Spot.objects.filter(map=custom_map)
-    other_maps = CustomMap.objects.exclude(id=map_id)  # ← 他のマップ取得
+    other_maps = CustomMap.objects.exclude(id=map_id)  
     return render(request, 'map/map.html', {
         'custom_map': custom_map,
         'spots': spots,

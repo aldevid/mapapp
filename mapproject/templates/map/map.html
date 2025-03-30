@@ -72,8 +72,23 @@
         <button type="button" id="delete-spot-btn" style="margin-top: 8px; margin-left: 130px;">削除</button>
       </form>
     </div>
-
   </div>
+  
+  <div id="mymap-name">{{ custom_map.name }}</div>
+  <style>
+    #mymap-name {
+  position: fixed;
+  top: 10px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #333;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 5px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.2);
+  z-index: 99999; /* ← ← ← ここで最前面に */
+    }
+  </style>
 
   <script>
     const MAP_ID = "{{ map_id|default:'' }}";
@@ -82,5 +97,6 @@
 
   <script src="{% static 'map/mapList.js' %}"></script>
   <script src="{% static 'map/app.js' %}"></script>
+  
 </body>
 </html>
