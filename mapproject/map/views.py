@@ -2,15 +2,17 @@
 import random
 import string
 import json
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .models import CustomMap, Spot
 
+@login_required
 def index(request):
-    maps = CustomMap.objects.order_by('-created_at')  
-    return render(request, 'map/index.html', {'maps': maps})  
+    maps = CustomMap.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'map/index.html', {'maps': maps})
 
 def map_view(request, map_id):
     custom_map = get_object_or_404(CustomMap, id=map_id)
@@ -23,12 +25,12 @@ def map_view(request, map_id):
         'map_id': map_id,
     })
 
-
+@login_required
 def create_map(request):
     if request.method == 'POST':
         name = request.POST['name']
         map_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
-        CustomMap.objects.create(id=map_id, name=name)
+        CustomMap.objects.create(id=map_id, name=name, user=request.user)  # ←★ここ！
         return redirect('map:map_view', map_id=map_id)
 
 def add_spot(request, map_id):
