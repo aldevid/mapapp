@@ -111,6 +111,18 @@ function showViewMode(spot) {
   document.getElementById('save-spot-btn').style.display = 'none';
 
   document.getElementById('disp-name').textContent = spot.name;
+
+  const iconEl = document.getElementById('icon-display');
+  iconEl.innerHTML = `
+    <div style="
+      background-color: ${getPinColor(spot.icon)};
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 0 2px rgba(0,0,0,0.3);
+      "></div>`
+
   document.getElementById('disp-genre').textContent = spot.genre;
   document.getElementById('disp-url').textContent = spot.url;
   document.getElementById('disp-url').href = spot.url;
@@ -240,3 +252,16 @@ function getColoredIcon(color) {
     iconAnchor: [8, 8]
   });
 }
+
+function getPinColor(icon) {
+    const pinColors = {
+      red: '#e74c3c',
+      blue: '#3498db',
+      green: '#2ecc71',
+      orange: '#e67e22',
+      purple: '#9b59b6',
+      default: '#7f8c8d'
+    };
+    return pinColors[icon] || pinColors.default;
+  }
+  

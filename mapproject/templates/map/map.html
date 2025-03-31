@@ -44,7 +44,12 @@
     <!-- sidebar main -->
     <div id="sidebar-main" style="display: none;">
       <div class="spot-field">
-        <p><strong>名前</strong> <span id="disp-name"></span><input type="text" id="spot-name" class="edit-field" style="display:none;"></p>
+        <p style="display: flex; justify-content: flex-start; align-items: center; gap: 6px;">
+          <strong>名前</strong>
+          <span id="disp-name" style="margin-left: 4px;"></span>
+          <span id="icon-display" style="width: 16px; height: 16px;"></span>
+          <input type="text" id="spot-name" class="edit-field" style="display:none;">
+        </p>
         <p><strong>ジャンル</strong> <span id="disp-genre"></span>
           <select id="spot-genre" class="edit-field" style="display:none;">
             <option value="">選択してください</option>
@@ -60,7 +65,7 @@
         <p><strong>営業時間</strong> <span id="disp-hours"></span><input type="text" id="spot-hours" class="edit-field" style="display:none;"></p>
         <p><strong>メモ</strong> <span id="disp-memo"></span><textarea id="spot-memo" rows="6" cols="30" class="edit-field" style="display:none;"></textarea></p>
         <p>
-          <strong>カラー</strong>
+          <label class="edit-field" style="display: none;"><strong>カラー</strong></label>
           <select id="spot-icon" class="edit-field" style="display:none;">
             <option value="default">グレー</option>
             <option value="red">赤</option>
