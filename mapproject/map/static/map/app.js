@@ -1,3 +1,4 @@
+// ====== Map Initialization ======
 const map = L.map('map').setView([35.181446, 136.906398], 12);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -6,15 +7,26 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let currentTempMarker = null;
 
+// ====== Map Click - Add New Temporary Marker ======
 map.on('click', function (e) {
   const { lat, lng } = e.latlng;
+
+  const mapList = document.getElementById('my-map-list');
+  if (mapList.style.display === 'block') {
+    mapList.style.display = 'none';
+    const toggle = document.getElementById('my-map-toggle');
+    if (toggle) toggle.innerText = 'Myマップ ▾';
+  }
 
   if (currentTempMarker) {
     map.removeLayer(currentTempMarker);
     currentTempMarker = null;
   }
 
-  const marker = L.marker([lat, lng]).addTo(map);
+  const marker = L.marker([lat, lng], {
+    icon: getColoredIcon('default')
+  }).addTo(map);
+
   marker.isSaved = false;
   marker.spotData = {
     id: null,
@@ -23,17 +35,20 @@ map.on('click', function (e) {
     memo: '',
     genre: '',
     url: '',
-    hours: ''
+    hours: '',
+    icon: 'default'
   };
 
   currentTempMarker = marker;
   openSidebarWithSpot(marker.spotData);
 });
 
+// ====== Utility - Get CSRF Token ======
 function getCsrfToken() {
   return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
+// ====== Sidebar Logic ======
 function openSidebarWithSpot(spot) {
   const isNew = !spot.id || spot.id === "null";
   const sidebar = document.getElementById('sidebar-main');
@@ -44,6 +59,7 @@ function openSidebarWithSpot(spot) {
   document.getElementById('spot-genre').value = spot.genre || '';
   document.getElementById('spot-url').value = spot.url || '';
   document.getElementById('spot-hours').value = spot.hours || '';
+  document.getElementById('spot-icon').value = spot.icon || 'default';
 
   sidebar.dataset.spotId = spot.id && spot.id !== 'null' ? String(spot.id) : '';
 
@@ -77,7 +93,6 @@ function showViewMode(spot) {
   document.getElementById('disp-hours').textContent = spot.hours;
   document.getElementById("disp-memo").innerHTML = spot.memo.replace(/\n/g, "<br>");
 
-
   map.eachLayer(function (layer) {
     if (layer instanceof L.Marker && layer.spotData && String(layer.spotData.id) === String(spotId)) {
       layer.spotData = {
@@ -86,13 +101,16 @@ function showViewMode(spot) {
         genre: spot.genre,
         url: spot.url,
         hours: spot.hours,
-        memo: spot.memo
+        memo: spot.memo,
+        icon: spot.icon
       };
+      layer.setIcon(getColoredIcon(spot.icon || 'default'));
       layer.bindPopup(spot.name);
     }
   });
 }
 
+// ====== DOM Ready - Button Handlers & Save Logic ======
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('edit-spot-btn')?.addEventListener('click', () => {
     enterEditMode();
@@ -106,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const url = document.getElementById('spot-url').value;
     const hours = document.getElementById('spot-hours').value;
     const memo = document.getElementById('spot-memo').value;
+    const icon = document.getElementById('spot-icon').value;
 
     const latLng = currentTempMarker ? currentTempMarker.getLatLng() : null;
 
@@ -118,40 +137,34 @@ document.addEventListener('DOMContentLoaded', () => {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCsrfToken()
         },
-        body: JSON.stringify({ name, genre, url, hours, memo, lat: latLng.lat, lng: latLng.lng })
+        body: JSON.stringify({ name, genre, url, hours, memo, icon, lat: latLng.lat, lng: latLng.lng })
       })
-        .then(res => {
-          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-          return res.json();
-        })
+        .then(res => res.json())
         .then(data => {
           if (data.status === 'okay') {
             const newId = String(data.id);
             document.getElementById('sidebar-main').dataset.spotId = newId;
-        
+
             if (currentTempMarker) {
-              // 保存されたピンとして更新
               currentTempMarker.spotData = {
                 id: newId,
                 lat: latLng.lat,
                 lng: latLng.lng,
-                name, genre, url, hours, memo
+                name, genre, url, hours, memo, icon
               };
-        
+
+              currentTempMarker.setIcon(getColoredIcon(icon));
               currentTempMarker.bindPopup(name);
               currentTempMarker.on('click', function () {
                 openSidebarWithSpot(this.spotData);
               });
-        
-              // currentTempMarker はもう仮ではなくなるので、nullにして消さないようにする
+
               currentTempMarker = null;
             }
-        
-            // 表示モードに切り替え
-            showViewMode({ id: newId, name, genre, url, hours, memo });
+
+            showViewMode({ id: newId, name, genre, url, hours, memo, icon });
           }
         })
-        
         .catch(err => {
           console.error('保存エラー:', err);
         });
@@ -163,34 +176,43 @@ document.addEventListener('DOMContentLoaded', () => {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCsrfToken()
         },
-        body: JSON.stringify({ name, genre, url, hours, memo })
+        body: JSON.stringify({ name, genre, url, hours, memo, icon })
       })
         .then(res => res.json())
         .then(data => {
           if (data.status === 'updated') {
-            showViewMode({ id: spotId, name, genre, url, hours, memo });
+            showViewMode({ id: spotId, name, genre, url, hours, memo, icon });
           }
         });
     }
   });
 });
 
+// ====== Fetch & Display Existing Spots ======
 fetch(`/map/${MAP_ID}/spots/`)
   .then(response => response.json())
   .then(data => {
     data.forEach(spot => {
-      const marker = L.marker([spot.lat, spot.lng])
-        .addTo(map)
-        .bindPopup(spot.name);
+      const marker = L.marker([spot.lat, spot.lng], {
+        icon: getColoredIcon(spot.icon || 'default')
+      }).addTo(map);
 
       marker.spotData = spot;
 
       marker.on('click', function () {
+        const mapList = document.getElementById('my-map-list');
+        if (mapList.style.display === 'block') {
+          mapList.style.display = 'none';
+          const toggle = document.getElementById('my-map-toggle');
+          if (toggle) toggle.innerText = 'Myマップ ▾';
+        }
+
         openSidebarWithSpot(this.spotData);
       });
     });
   });
 
+// ====== Delete Spot ======
 document.getElementById('delete-spot-btn').addEventListener('click', function () {
   const spotId = document.getElementById('sidebar-main').dataset.spotId;
 
@@ -216,6 +238,7 @@ document.getElementById('delete-spot-btn').addEventListener('click', function ()
     });
 });
 
+// ====== Toggle My Map List ======
 function toggleMapList() {
   const list = document.getElementById('my-map-list');
   const toggle = document.getElementById('my-map-toggle');
@@ -226,4 +249,30 @@ function toggleMapList() {
     list.style.display = 'none';
     toggle.innerText = 'Myマップ ▾';
   }
+}
+
+// ====== Icon Generator (Colored Pin Marker) ======
+function getColoredIcon(color) {
+  const pinColors = {
+    red: '#e74c3c',
+    blue: '#3498db',
+    green: '#2ecc71',
+    orange: '#e67e22',
+    purple: '#9b59b6',
+    default: '#7f8c8d'
+  };
+
+  return L.divIcon({
+    className: 'custom-div-icon',
+    html: `<div style="
+      background-color: ${pinColors[color] || pinColors.default};
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 0 2px rgba(0,0,0,0.3);
+    "></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
+  });
 }

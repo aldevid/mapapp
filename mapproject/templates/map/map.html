@@ -34,9 +34,7 @@
 
         <!-- マップ一覧 -->
         {% for m in other_maps %}
-        <div class="map-card">
-          <a href="{% url 'map:map_view' m.id %}">{{ m.name }}</a>
-        </div>
+          <a href="{% url 'map:map_view' m.id %}" class="map-card">{{ m.name }}</a>
         {% empty %}
         <p>他にマップはありません</p>
         {% endfor %}
@@ -60,7 +58,19 @@
         </p>
         <p><strong>URL:</strong> <a id="disp-url" href="#" target="_blank"></a><input type="url" id="spot-url" class="edit-field" style="display:none;"></p>
         <p><strong>営業時間:</strong> <span id="disp-hours"></span><input type="text" id="spot-hours" class="edit-field" style="display:none;"></p>
-        <p><strong>メモ:</strong> <span id="disp-memo"></span><textarea id="spot-memo" rows="4" cols="30" class="edit-field" style="display:none;"></textarea></p>
+        <p><strong>メモ:</strong> <span id="disp-memo"></span><textarea id="spot-memo" rows="6" cols="30" class="edit-field" style="display:none;"></textarea></p>
+        <p>
+          <strong>ピンの色:</strong>
+          <select id="spot-icon" class="edit-field" style="display:none;">
+            <option value="default">グレー</option>
+            <option value="red">赤</option>
+            <option value="blue">青</option>
+            <option value="green">緑</option>
+            <option value="orange">オレンジ</option>
+            <option value="purple">紫</option>
+          </select>
+        </p>
+        
       </div>
       <div class="spot-buttons" style="display: flex; width: 100%;">
         <button id="edit-spot-btn">編集</button>
