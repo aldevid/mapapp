@@ -44,8 +44,8 @@
     <!-- sidebar main -->
     <div id="sidebar-main" style="display: none;">
       <div class="spot-field">
-        <p><strong>名前:</strong> <span id="disp-name"></span><input type="text" id="spot-name" class="edit-field" style="display:none;"></p>
-        <p><strong>ジャンル:</strong> <span id="disp-genre"></span>
+        <p><strong>名前</strong> <span id="disp-name"></span><input type="text" id="spot-name" class="edit-field" style="display:none;"></p>
+        <p><strong>ジャンル</strong> <span id="disp-genre"></span>
           <select id="spot-genre" class="edit-field" style="display:none;">
             <option value="">選択してください</option>
             <option value="カフェ">カフェ</option>
@@ -56,11 +56,11 @@
             <option value="その他">その他</option>
           </select>
         </p>
-        <p><strong>URL:</strong> <a id="disp-url" href="#" target="_blank"></a><input type="url" id="spot-url" class="edit-field" style="display:none;"></p>
-        <p><strong>営業時間:</strong> <span id="disp-hours"></span><input type="text" id="spot-hours" class="edit-field" style="display:none;"></p>
-        <p><strong>メモ:</strong> <span id="disp-memo"></span><textarea id="spot-memo" rows="6" cols="30" class="edit-field" style="display:none;"></textarea></p>
+        <p><strong>URL</strong> <a id="disp-url" href="#" target="_blank"></a><input type="url" id="spot-url" class="edit-field" style="display:none;"></p>
+        <p><strong>営業時間</strong> <span id="disp-hours"></span><input type="text" id="spot-hours" class="edit-field" style="display:none;"></p>
+        <p><strong>メモ</strong> <span id="disp-memo"></span><textarea id="spot-memo" rows="6" cols="30" class="edit-field" style="display:none;"></textarea></p>
         <p>
-          <strong>ピンの色:</strong>
+          <strong>カラー</strong>
           <select id="spot-icon" class="edit-field" style="display:none;">
             <option value="default">グレー</option>
             <option value="red">赤</option>
@@ -97,14 +97,14 @@
     }
   </style>
 
-  <script>
-    const MAP_ID = "{{ map_id|default:'' }}";
-    const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    const CREATE_MAP_URL = "{% url 'map:create_map' %}";
-  </script>
+<script>
+  const MAP_ID = "{{ map_id|default:'' }}";
+  const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  const CREATE_MAP_URL = "{% url 'map:create_map' %}";
+</script>
 
-  <script src="{% static 'map/mapList.js' %}"></script>
-  <script src="{% static 'map/app.js' %}"></script>
+<script type="module" src="{% static 'map/app.js' %}"></script>
+
 
 </body>
 </html>

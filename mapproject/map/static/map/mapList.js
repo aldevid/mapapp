@@ -1,4 +1,15 @@
-document.addEventListener('DOMContentLoaded', () => {
+// mapList.js
+
+export function setupMapListUI() {
+  const toggle = document.getElementById('my-map-toggle');
+  const list = document.getElementById('my-map-list');
+
+  toggle?.addEventListener('click', () => {
+    const isVisible = list.style.display === 'block';
+    list.style.display = isVisible ? 'none' : 'block';
+    toggle.innerText = isVisible ? 'Myマップ ▾' : 'Myマップ ▴';
+  });
+
   document.getElementById('show-create-map-form')?.addEventListener('click', () => {
     const form = document.getElementById('create-map-form');
     form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
@@ -26,4 +37,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
-});
+}

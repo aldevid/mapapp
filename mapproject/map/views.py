@@ -52,7 +52,8 @@ def add_spot(request, map_id):
             memo=data.get('memo', ''),
             genre=data.get('genre', ''),
             url=data.get('url', ''),
-            hours=data.get('hours', '')
+            hours=data.get('hours', ''),
+            icon=data.get('icon', 'default')
         )
         return JsonResponse({
             'status': 'okay',
@@ -72,6 +73,7 @@ def get_spots(request, map_id):
             'genre': s.genre,
             'url': s.url,
             'hours': s.hours,
+            'icon': s.icon,
         }
         for s in spots
     ]
@@ -87,7 +89,8 @@ def update_spot(request, map_id, spot_id):
     spot.memo = data.get('memo', spot.memo)
     spot.genre = data.get('genre', spot.genre)
     spot.url = data.get('url', spot.url)
-    spot.hours = data.get('hours', spot.hours)
+    spot.hours = data.get('hours', spot.hours),
+    spot.icon = data.get('icon', spot.icon)
     spot.save()
     return JsonResponse({'status': 'updated'})
 
