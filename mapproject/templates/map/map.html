@@ -1,87 +1,115 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="utf-8" />
-    <title>マイマップ</title>
+  <meta charset="utf-8" />
+  <title>マイマップ</title>
+  <meta name="csrf-token" content="{{ csrf_token }}">
 
-    <meta name="csrf-token" content="{{ csrf_token }}">
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'map/style.css' %}">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'map/style.css' %}">
 </head>
 <body>
 
   <div id="map"></div>
 
   <div id="sidebar">
-    <div id="sidebar-main">
-      <form id="spot-form">
-        <label>名前</label><br>
-        <input type="text" id="spot-name"><br><br>
-
-        <label>ジャンル</label><br>
-        <select id="spot-genre">
-          <option value="">選択してください</option>
-          <option value="カフェ">カフェ</option>
-          <option value="レストラン">レストラン</option>
-          <option value="観光">観光</option>
-          <option value="ショッピング">ショッピング</option>
-          <option value="ホテル">ホテル</option>
-          <option value="その他">その他</option>
-        </select><br><br>
-
-        <label>URL</label><br>
-        <input type="url" id="spot-url"><br><br>
-
-        <label>営業時間</label><br>
-        <input type="text" id="spot-hours"><br><br>
-
-        <label>メモ</label><br>
-        <textarea id="spot-memo" rows="4" cols="30"></textarea>
-
-        <button type="submit">保存</button>
-        <button type="button" id="delete-spot-btn" style="margin-top: 8px; margin-left: 130px;">削除</button>
-      </form>
-    </div>
-
-    <!-- 下部（常時表示＋展開式） -->
+    <!-- mymap button -->
     <div id="sidebar-footer">
       <div id="my-map-toggle" onclick="toggleMapList()">Myマップ ▾</div>
-
       <div id="my-map-list" style="display: none;">
+        <!-- マップ作成ボタン -->
+        <div style="margin-bottom: 10px;">
+          <button id="show-create-map-form" style="width: 100%;">+ 新しいマップを作成</button>
+        </div>
+
+        <!-- 入力フォーム（非表示） -->
+        <div id="create-map-form" style="display: none; margin-bottom: 15px;">
+          <input type="text" id="new-map-name" placeholder="マップ名" style="width: 100%; margin-bottom: 5px;">
+          <button id="submit-new-map" style="width: 100%;">作成する</button>
+        </div>
+
+        <!-- マップ一覧 -->
         {% for m in other_maps %}
-          <div class="map-card">
-            <a href="{% url 'map:map_view' m.id %}">{{ m.name }}</a>
-          </div>
+          <a href="{% url 'map:map_view' m.id %}" class="map-card">{{ m.name }}</a>
         {% empty %}
-          <p>他にマップはありません</p>
+        <p>他にマップはありません</p>
         {% endfor %}
+      </div>
+    </div>
+
+    <!-- sidebar main -->
+    <div id="sidebar-main" style="display: none;">
+      <div class="spot-field">
+        <p style="display: flex; justify-content: flex-start; align-items: center; gap: 6px;">
+          <strong>名前</strong>
+          <span id="disp-name" style="margin-left: 4px;"></span>
+          <span id="icon-display" style="width: 16px; height: 16px;"></span>
+          <input type="text" id="spot-name" class="edit-field" style="display:none;">
+        </p>
+        <p><strong>ジャンル</strong> <span id="disp-genre"></span>
+          <select id="spot-genre" class="edit-field" style="display:none;">
+            <option value="">選択してください</option>
+            <option value="カフェ">カフェ</option>
+            <option value="レストラン">レストラン</option>
+            <option value="観光">観光</option>
+            <option value="ショッピング">ショッピング</option>
+            <option value="ホテル">ホテル</option>
+            <option value="その他">その他</option>
+          </select>
+        </p>
+        <p><strong>URL</strong> <a id="disp-url" href="#" target="_blank"></a><input type="url" id="spot-url" class="edit-field" style="display:none;"></p>
+        <p><strong>営業時間</strong> <span id="disp-hours"></span><input type="text" id="spot-hours" class="edit-field" style="display:none;"></p>
+        <p><strong>メモ</strong> <span id="disp-memo"></span><textarea id="spot-memo" rows="6" cols="30" class="edit-field" style="display:none;"></textarea></p>
+        <p>
+          <label class="edit-field" style="display: none;"><strong>カラー</strong></label>
+          <select id="spot-icon" class="edit-field" style="display:none;">
+            <option value="default">グレー</option>
+            <option value="red">赤</option>
+            <option value="blue">青</option>
+            <option value="green">緑</option>
+            <option value="orange">オレンジ</option>
+            <option value="purple">紫</option>
+          </select>
+        </p>
+        
+      </div>
+      <div class="spot-buttons" style="display: flex; width: 100%;">
+        <button id="edit-spot-btn">編集</button>
+        <button id="save-spot-btn" style="display:none;">保存</button>
+        <button id="delete-spot-btn" style="margin-left: auto;" >削除</button>
       </div>
     </div>
   </div>
 
-  <!-- JavaScript -->
-  <script>
-    const MAP_ID = "{{ map_id }}";
+  <div id="mymap-name">{{ custom_map.name }}</div>
 
-    function toggleMapList() {
-      const list = document.getElementById('my-map-list');
-      const toggle = document.getElementById('my-map-toggle');
-
-      if (list.style.display === 'none' || list.style.display === '') {
-        list.style.display = 'block';
-        toggle.innerText = 'Myマップ ▴';
-      } else {
-        list.style.display = 'none';
-        toggle.innerText = 'Myマップ ▾';
-      }
+  <style>
+    #mymap-name {
+      position: fixed;
+      top: 5px;
+      left: 255px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #333;
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 5px;
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+      z-index: 99999;
     }
-  </script>
+  </style>
 
-  <script src="{% static 'map/app.js' %}"></script>
+<script>
+  const MAP_ID = "{{ map_id|default:'' }}";
+  const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  const CREATE_MAP_URL = "{% url 'map:create_map' %}";
+</script>
+
+<script type="module" src="{% static 'map/app.js' %}"></script>
+
+
 </body>
 </html>
