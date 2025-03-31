@@ -19,7 +19,7 @@ def map_view(request, map_id):
     spots = Spot.objects.filter(map=custom_map)
     other_maps = CustomMap.objects.exclude(id=map_id)  
     return render(request, 'map/map.html', {
-        'custom_map': custom_map,
+        'custom_map': customj_map,
         'spots': spots,
         'other_maps': other_maps,
         'map_id': map_id,
@@ -40,18 +40,17 @@ def create_map(request):
     if request.method == 'POST':
         name = request.POST['name']
         map_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
-        CustomMap.objects.create(id=map_id, name=name)
+        CustomMap.objects.create(id=map_id, name=name, user=request.user)
         return redirect('map:map_view', map_id=map_id)
 
 @login_required
 def create_map_ajax(request):
-    """ JSからfetchで呼ぶ用（JSONレスポンス）"""
     if request.method == 'POST':
-        data = request.POST
-        name = data.get('name', '')
+        name = request.POST['name']
         map_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
         CustomMap.objects.create(id=map_id, name=name, user=request.user)
         return JsonResponse({'status': 'ok', 'map_id': map_id})
+
 
 @csrf_exempt
 def add_spot(request, map_id):

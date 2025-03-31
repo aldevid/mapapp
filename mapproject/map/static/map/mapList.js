@@ -21,17 +21,8 @@ export function setupMapListUI() {
       alert('マップ名を入力してください');
       return;
     }
-    fetch("/map/create/ajax/", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-      },
-      body: `name=${encodeURIComponent(name)}`
-    })
-    
 
-    fetch("/map/create/", {
+    fetch("/map/create/ajax/", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -42,8 +33,14 @@ export function setupMapListUI() {
     .then(res => res.json())
     .then(data => {
       if (data.status === 'ok') {
+        // ✅ 作成後、そのマップに即座に遷移！
         window.location.href = `/map/${data.map_id}/`;
+      } else {
+        alert('マップの作成に失敗しました。');
       }
+    })
+    .catch(() => {
+      alert('通信エラーが発生しました。');
     });
   });
 }
