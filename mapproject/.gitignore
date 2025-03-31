@@ -6,4 +6,4 @@ __pycache__/
 *.pyc
 
 # SQLiteデータベース（ローカル開発専用なら無視）
-db.sqlite3
+db.sqlite3/

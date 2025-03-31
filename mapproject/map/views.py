@@ -17,7 +17,7 @@ def index(request):
 def map_view(request, map_id):
     custom_map = get_object_or_404(CustomMap, id=map_id)
     spots = Spot.objects.filter(map=custom_map)
-    other_maps = CustomMap.objects.exclude(id=map_id)  # ← 他のマップ取得
+    other_maps = CustomMap.objects.exclude(id=map_id)  
     return render(request, 'map/map.html', {
         'custom_map': custom_map,
         'spots': spots,
@@ -25,14 +25,35 @@ def map_view(request, map_id):
         'map_id': map_id,
     })
 
+def default_map_view(request):
+    spots = Spot.objects.all()
+    maps = CustomMap.objects.order_by('-created_at')
+    return render(request, 'map/default_map.html', {
+        'spots': spots,
+        'all_maps': maps,
+    })
+
+
 @login_required
 def create_map(request):
+    """ 通常のフォームからのPOSTでマップ作成してページ遷移する用 """
     if request.method == 'POST':
         name = request.POST['name']
         map_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
-        CustomMap.objects.create(id=map_id, name=name, user=request.user)  # ←★ここ！
+        CustomMap.objects.create(id=map_id, name=name)
         return redirect('map:map_view', map_id=map_id)
 
+@login_required
+def create_map_ajax(request):
+    """ JSからfetchで呼ぶ用（JSONレスポンス）"""
+    if request.method == 'POST':
+        data = request.POST
+        name = data.get('name', '')
+        map_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+        CustomMap.objects.create(id=map_id, name=name, user=request.user)
+        return JsonResponse({'status': 'ok', 'map_id': map_id})
+
+@csrf_exempt
 def add_spot(request, map_id):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -41,12 +62,18 @@ def add_spot(request, map_id):
             map=map_obj,
             name=data.get('name', ''),
             lat=data['lat'],
-            lng=data['lng']
+            lng=data['lng'],
+            memo=data.get('memo', ''),
+            genre=data.get('genre', ''),
+            url=data.get('url', ''),
+            hours=data.get('hours', ''),
+            icon=data.get('icon', 'default')
         )
         return JsonResponse({
             'status': 'okay',
             'id': spot.id
         })
+
 
 def get_spots(request, map_id):
     spots = Spot.objects.filter(map__id=map_id)
@@ -56,7 +83,11 @@ def get_spots(request, map_id):
             'name': s.name,
             'lat': s.lat,
             'lng': s.lng,
-            'memo': s.memo
+            'memo': s.memo,
+            'genre': s.genre,
+            'url': s.url,
+            'hours': s.hours,
+            'icon': s.icon,
         }
         for s in spots
     ]
@@ -73,6 +104,7 @@ def update_spot(request, map_id, spot_id):
     spot.genre = data.get('genre', spot.genre)
     spot.url = data.get('url', spot.url)
     spot.hours = data.get('hours', spot.hours)
+    spot.icon = data.get('icon', spot.icon)
     spot.save()
     return JsonResponse({'status': 'updated'})
 

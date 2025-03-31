@@ -19,7 +19,7 @@ class Spot(models.Model):
         ('hotel', '宿泊'),
         ('other', 'その他'),
     ]
-    
+    icon  = models.CharField(max_length=50, default='default')
     map = models.ForeignKey(CustomMap, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=True)
     memo = models.TextField(blank=True)
@@ -29,6 +29,5 @@ class Spot(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
-
     def __str__(self):
         return f"{self.name} ({self.lat}, {self.lng})"
