@@ -75,7 +75,8 @@ function showViewMode(spot) {
   document.getElementById('disp-url').textContent = spot.url;
   document.getElementById('disp-url').href = spot.url;
   document.getElementById('disp-hours').textContent = spot.hours;
-  document.getElementById('disp-memo').textContent = spot.memo;
+  document.getElementById("disp-memo").innerHTML = spot.memo.replace(/\n/g, "<br>");
+
 
   map.eachLayer(function (layer) {
     if (layer instanceof L.Marker && layer.spotData && String(layer.spotData.id) === String(spotId)) {
