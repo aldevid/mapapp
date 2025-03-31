@@ -14,7 +14,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('map:index')
+            return redirect('map:default_map')
         else:
             messages.error(request, 'ユーザー名またはパスワードが違います')
     else:

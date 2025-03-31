@@ -3,7 +3,8 @@ from . import views
 
 app_name = 'map'
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.default_map_view, name='default_map'),
+    path('default/spots/', views.get_default_spots, name='get_default_spots'),
     # <map_id>対応ルーティングを追加
     path('create/', views.create_map, name='create_map'),
     path('create/ajax/', views.create_map_ajax, name='create_map_ajax'),

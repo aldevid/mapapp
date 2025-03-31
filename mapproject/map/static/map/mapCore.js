@@ -1,5 +1,3 @@
-// mapCore.js
-
 let map;
 let currentTempMarker = null;
 
@@ -14,7 +12,9 @@ export function initMap() {
 }
 
 export function loadSpots() {
-  fetch(`/map/${MAP_ID}/spots/`)
+  const url = MAP_ID ? `/map/${MAP_ID}/spots/` : `/map/default/spots/`;
+
+  fetch(url)
     .then(response => response.json())
     .then(data => {
       data.forEach(spot => {
@@ -66,7 +66,7 @@ function getCsrfToken() {
 
 function closeMapListIfOpen() {
   const mapList = document.getElementById('my-map-list');
-  if (mapList.style.display === 'block') {
+  if (mapList && mapList.style.display === 'block') {
     mapList.style.display = 'none';
     const toggle = document.getElementById('my-map-toggle');
     if (toggle) toggle.innerText = 'Myマップ ▾';
@@ -121,7 +121,7 @@ function showViewMode(spot) {
       border-radius: 50%;
       border: 2px solid white;
       box-shadow: 0 0 2px rgba(0,0,0,0.3);
-      "></div>`
+    "></div>`;
 
   document.getElementById('disp-genre').textContent = spot.genre;
   document.getElementById('disp-url').textContent = spot.url;
@@ -204,7 +204,7 @@ document.getElementById('save-spot-btn')?.addEventListener('click', () => {
   }
 });
 
-document.getElementById('delete-spot-btn').addEventListener('click', function () {
+document.getElementById('delete-spot-btn')?.addEventListener('click', function () {
   const spotId = document.getElementById('sidebar-main').dataset.spotId;
   if (!spotId || spotId === 'null' || !confirm("このスポットを削除しますか？")) return;
 
@@ -254,14 +254,13 @@ function getColoredIcon(color) {
 }
 
 function getPinColor(icon) {
-    const pinColors = {
-      red: '#e74c3c',
-      blue: '#3498db',
-      green: '#2ecc71',
-      orange: '#e67e22',
-      purple: '#9b59b6',
-      default: '#7f8c8d'
-    };
-    return pinColors[icon] || pinColors.default;
-  }
-  
+  const pinColors = {
+    red: '#e74c3c',
+    blue: '#3498db',
+    green: '#2ecc71',
+    orange: '#e67e22',
+    purple: '#9b59b6',
+    default: '#7f8c8d'
+  };
+  return pinColors[icon] || pinColors.default;
+}

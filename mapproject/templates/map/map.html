@@ -21,6 +21,10 @@
     <div id="sidebar-footer">
       <div id="my-map-toggle">Myマップ ▾</div>
       <div id="my-map-list" style="display: none;">
+        <a href="{% url 'map:default_map' %}" class="map-card" style="background-color: #f5f5f5; font-weight: bold;">
+          🏠ホーム
+        </a>
+        
         <!-- マップ作成ボタン -->
         <div style="margin-bottom: 10px;">
           <button id="show-create-map-form" style="width: 100%;">+ 新しいマップを作成</button>

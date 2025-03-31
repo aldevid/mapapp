@@ -9,29 +9,51 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .models import CustomMap, Spot
 
-@login_required
-def index(request):
-    maps = CustomMap.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'map/index.html', {'maps': maps})
-
+# @login_required
+# def index(request):
+#     maps = CustomMap.objects.filter(user=request.user).order_by('-created_at')
+#     return render(request, 'map/index.html', {'maps': maps})
+# @login_required
 def map_view(request, map_id):
     custom_map = get_object_or_404(CustomMap, id=map_id)
     spots = Spot.objects.filter(map=custom_map)
-    other_maps = CustomMap.objects.exclude(id=map_id)  
+    other_maps = CustomMap.objects.filter(user=request.user).exclude(id=map_id)  
     return render(request, 'map/map.html', {
-        'custom_map': customj_map,
+        'custom_map': custom_map,
         'spots': spots,
         'other_maps': other_maps,
         'map_id': map_id,
     })
 
+@login_required
 def default_map_view(request):
-    spots = Spot.objects.all()
-    maps = CustomMap.objects.order_by('-created_at')
-    return render(request, 'map/default_map.html', {
-        'spots': spots,
-        'all_maps': maps,
+    user_maps = CustomMap.objects.filter(user=request.user)
+    return render(request, 'map/map.html', {
+        'custom_map': None,        # 表示されるマップ名は空
+        'map_id': '',              # map_id が空 → JS側で「デフォルトモード」だと判定
+        'other_maps': user_maps,   # サイドバーに表示するマイマップ一覧
     })
+
+@login_required
+def get_default_spots(request):
+    user_maps = CustomMap.objects.filter(user=request.user)
+    spots = Spot.objects.filter(map__in=user_maps)
+
+    spots_data = [
+        {
+            'id': s.id,
+            'name': s.name,
+            'lat': s.lat,
+            'lng': s.lng,
+            'memo': s.memo,
+            'genre': s.genre,
+            'url': s.url,
+            'hours': s.hours,
+            'icon': s.icon,
+        }
+        for s in spots
+    ]
+    return JsonResponse(spots_data, safe=False)
 
 
 @login_required
@@ -73,9 +95,10 @@ def add_spot(request, map_id):
             'id': spot.id
         })
 
-
+@login_required
 def get_spots(request, map_id):
-    spots = Spot.objects.filter(map__id=map_id)
+    custom_map = get_object_or_404(CustomMap, id=map_id, user=request.user)
+    spots = Spot.objects.filter(map=custom_map)
     spots_data = [
         {
             'id': s.id,
