@@ -1,169 +1,209 @@
-// 地図を名古屋に初期表示
 const map = L.map('map').setView([35.181446, 136.906398], 12);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
-// 地図クリックで仮ピン＋保存ボタン表示
 let currentTempMarker = null;
 
 map.on('click', function (e) {
-    const { lat, lng } = e.latlng;
+  const { lat, lng } = e.latlng;
 
-    // 既存の仮ピンがあれば削除
-    if (currentTempMarker) {
-        map.removeLayer(currentTempMarker);
-        currentTempMarker = null;
-    }
+  if (currentTempMarker) {
+    map.removeLayer(currentTempMarker);
+    currentTempMarker = null;
+  }
 
-    // 新しい仮ピンを立てる
-    const marker = L.marker([lat, lng]).addTo(map);
-    marker.isSaved = false;
-    marker.spotData = {
-        id: null,
-        lat, lng,
-        name: '',
-        memo: '',
-        genre: '', 
-        url: '',
-        hours: ''
-    };
+  const marker = L.marker([lat, lng]).addTo(map);
+  marker.isSaved = false;
+  marker.spotData = {
+    id: null,
+    lat, lng,
+    name: '',
+    memo: '',
+    genre: '',
+    url: '',
+    hours: ''
+  };
 
-    currentTempMarker = marker;
-
-    openSidebarWithSpot(marker.spotData);
+  currentTempMarker = marker;
+  openSidebarWithSpot(marker.spotData);
 });
 
-
-// CSRFトークン取得（Django用）
 function getCsrfToken() {
-    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 
-
-
-// サイドバーにスポット情報を表示
 function openSidebarWithSpot(spot) {
-    const sidebar = document.getElementById('sidebar-main');
-    sidebar.style.display = 'block';
+  const isNew = !spot.id || spot.id === "null";
+  const sidebar = document.getElementById('sidebar-main');
+  sidebar.style.display = 'block';
 
-    document.getElementById('spot-name').value = spot.name || '';
-    document.getElementById('spot-memo').value = spot.memo || '';
-    document.getElementById('spot-genre').value = spot.genre || '';
-    document.getElementById('spot-url').value = spot.url || '';
-    document.getElementById('spot-hours').value = spot.hours || '';
+  document.getElementById('spot-name').value = spot.name || '';
+  document.getElementById('spot-memo').value = spot.memo || '';
+  document.getElementById('spot-genre').value = spot.genre || '';
+  document.getElementById('spot-url').value = spot.url || '';
+  document.getElementById('spot-hours').value = spot.hours || '';
 
-    sidebar.dataset.spotId = spot.id;
+  sidebar.dataset.spotId = spot.id && spot.id !== 'null' ? String(spot.id) : '';
+
+  if (isNew) {
+    enterEditMode();
+  } else {
+    showViewMode(spot);
+  }
 }
 
+function enterEditMode() {
+  document.querySelectorAll('.edit-field').forEach(el => el.style.display = 'inline');
+  document.querySelectorAll('#sidebar-main span, #sidebar-main a').forEach(el => el.style.display = 'none');
+  document.getElementById('edit-spot-btn').style.display = 'none';
+  document.getElementById('save-spot-btn').style.display = 'inline';
+}
 
-// 初期ロード時に保存済みスポットを読み込む
-fetch(`/map/${MAP_ID}/spots/`)
-    .then(response => response.json())
-    .then(data => {
-        data.forEach(spot => {
-            const marker = L.marker([spot.lat, spot.lng])
-                .addTo(map)
-                .bindPopup(spot.name);
+function showViewMode(spot) {
+  const spotId = spot.id || document.getElementById('sidebar-main').dataset.spotId;
+  if (!spotId || spotId === "null") return;
 
-            marker.spotData = spot;
+  document.querySelectorAll('.edit-field').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('#sidebar-main span, #sidebar-main a').forEach(el => el.style.display = 'inline');
+  document.getElementById('edit-spot-btn').style.display = 'inline';
+  document.getElementById('save-spot-btn').style.display = 'none';
 
-            marker.on('click', function () {
-                openSidebarWithSpot(this.spotData);
-            });
-        });
-    });
+  document.getElementById('disp-name').textContent = spot.name;
+  document.getElementById('disp-genre').textContent = spot.genre;
+  document.getElementById('disp-url').textContent = spot.url;
+  document.getElementById('disp-url').href = spot.url;
+  document.getElementById('disp-hours').textContent = spot.hours;
+  document.getElementById('disp-memo').textContent = spot.memo;
 
-    
+  map.eachLayer(function (layer) {
+    if (layer instanceof L.Marker && layer.spotData && String(layer.spotData.id) === String(spotId)) {
+      layer.spotData = {
+        id: spotId,
+        name: spot.name,
+        genre: spot.genre,
+        url: spot.url,
+        hours: spot.hours,
+        memo: spot.memo
+      };
+      layer.bindPopup(spot.name);
+    }
+  });
+}
 
-// sidebar add button
-document.getElementById('spot-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-  
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('edit-spot-btn')?.addEventListener('click', () => {
+    enterEditMode();
+  });
+
+  document.getElementById('save-spot-btn')?.addEventListener('click', () => {
     const spotId = document.getElementById('sidebar-main').dataset.spotId;
+
     const name = document.getElementById('spot-name').value;
-    const memo = document.getElementById('spot-memo').value;
     const genre = document.getElementById('spot-genre').value;
     const url = document.getElementById('spot-url').value;
     const hours = document.getElementById('spot-hours').value;
-  
+    const memo = document.getElementById('spot-memo').value;
+
+    const latLng = currentTempMarker ? currentTempMarker.getLatLng() : null;
+
     if (!spotId || spotId === "null") {
-        if (!currentTempMarker) return;
-      
-        const { lat, lng } = currentTempMarker.getLatLng();
-      
-        fetch(`/map/${MAP_ID}/spots/add/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCsrfToken()
-          },
-          body: JSON.stringify({ name, memo, genre, url, hours, lat, lng })
+      if (!latLng) return;
+
+      fetch(`/map/${MAP_ID}/spots/add/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify({ name, genre, url, hours, memo, lat: latLng.lat, lng: latLng.lng })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          return res.json();
         })
-        .then(res => res.json())
         .then(data => {
-          location.reload(); // 保存後はとりあえずリロードでもOK
-        });      
-  
+          if (data.status === 'okay') {
+            const newId = String(data.id);
+            document.getElementById('sidebar-main').dataset.spotId = newId;
+
+            if (currentTempMarker) {
+              currentTempMarker.spotData = {
+                id: newId,
+                lat: latLng.lat,
+                lng: latLng.lng,
+                name, genre, url, hours, memo
+              };
+            }
+
+            openSidebarWithSpot(currentTempMarker.spotData);
+          }
+        })
+        .catch(err => {
+          console.error('保存エラー:', err);
+        });
+
     } else {
-      // ⭐️ 既存スポットを更新
       fetch(`/map/${MAP_ID}/spots/${spotId}/update/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCsrfToken()
         },
-        body: JSON.stringify({ name, memo, genre, url, hours })
+        body: JSON.stringify({ name, genre, url, hours, memo })
       })
-      .then(res => res.json())
-      .then(data => {
-        // UI更新
-        map.eachLayer(function(layer) {
-          if (layer instanceof L.Marker && layer.spotData && layer.spotData.id == spotId) {
-            layer.bindPopup(name);
-            layer.spotData = { id: spotId, name, memo, genre, url, hours };
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'updated') {
+            showViewMode({ id: spotId, name, genre, url, hours, memo });
           }
         });
-  
-        const sidebar = document.getElementById('sidebar-main');
-        sidebar.style.backgroundColor = "#d1ffd1";
-        setTimeout(() => sidebar.style.backgroundColor = "#f9f9f9", 500);
-      });
     }
   });
-  
+});
 
-// sidebar delete button
-document.getElementById('delete-spot-btn').addEventListener('click', function() {
-    const spotId = document.getElementById('sidebar-main').dataset.spotId;
+fetch(`/map/${MAP_ID}/spots/`)
+  .then(response => response.json())
+  .then(data => {
+    data.forEach(spot => {
+      const marker = L.marker([spot.lat, spot.lng])
+        .addTo(map)
+        .bindPopup(spot.name);
 
-    if (!spotId || !confirm("このスポットを削除しますか？")) return;
+      marker.spotData = spot;
 
-    fetch(`/map/${MAP_ID}/spots/${spotId}/delete/`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRFToken': getCsrfToken()
-        }
-    })
+      marker.on('click', function () {
+        openSidebarWithSpot(this.spotData);
+      });
+    });
+  });
+
+document.getElementById('delete-spot-btn').addEventListener('click', function () {
+  const spotId = document.getElementById('sidebar-main').dataset.spotId;
+
+  if (!spotId || spotId === 'null' || !confirm("このスポットを削除しますか？")) return;
+
+  fetch(`/map/${MAP_ID}/spots/${spotId}/delete/`, {
+    method: 'DELETE',
+    headers: {
+      'X-CSRFToken': getCsrfToken()
+    }
+  })
     .then(res => res.json())
     .then(data => {
-        if (data.status === 'deleted') {
-            map.eachLayer(layer => {
-                if (layer instanceof L.Marker && layer.spotData && layer.spotData.id == spotId) {
-                    map.removeLayer(layer);
-                }
-            });
+      if (data.status === 'deleted') {
+        map.eachLayer(layer => {
+          if (layer instanceof L.Marker && layer.spotData && layer.spotData.id == spotId) {
+            map.removeLayer(layer);
+          }
+        });
 
-            document.getElementById('sidebar-main').style.display = 'none';
-
-        }
+        document.getElementById('sidebar-main').style.display = 'none';
+      }
     });
 });
-// sidebar modify
 
-
-// 展開/非表示処理（そのままでOK）
 function toggleMapList() {
   const list = document.getElementById('my-map-list');
   const toggle = document.getElementById('my-map-toggle');
@@ -175,30 +215,3 @@ function toggleMapList() {
     toggle.innerText = 'Myマップ ▾';
   }
 }
-// 作成フォーム表示
-document.getElementById('show-create-map-form').addEventListener('click', () => {
-  const form = document.getElementById('create-map-form');
-  form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
-});
-// Ajaxでマップ作成
-document.getElementById('submit-new-map').addEventListener('click', () => {
-  const name = document.getElementById('new-map-name').value;
-  if (!name.trim()) {
-    alert('マップ名を入力してください');
-    return;
-  }
-  fetch("{% url 'map:create_map' %}", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-    },
-    body: `name=${encodeURIComponent(name)}`
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.status === 'ok') {
-      window.location.href = `/map/${data.map_id}/`;
-    }
-  });
-});

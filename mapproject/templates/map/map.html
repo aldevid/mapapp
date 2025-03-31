@@ -18,85 +18,83 @@
 
   <div id="sidebar">
     <!-- mymap button -->
-      <div id="sidebar-footer">
-        <div id="my-map-toggle" onclick="toggleMapList()">Myマップ ▾</div>
-        <div id="my-map-list" style="display: none;">
-          <!-- マップ作成ボタン -->
-          <div style="margin-bottom: 10px;">
-            <button id="show-create-map-form" style="width: 100%;">＋ 新しいマップを作成</button>
-          </div>
-  
-          <!-- 入力フォーム（非表示） -->
-          <div id="create-map-form" style="display: none; margin-bottom: 15px;">
-            <input type="text" id="new-map-name" placeholder="マップ名" style="width: 100%; margin-bottom: 5px;">
-            <button id="submit-new-map" style="width: 100%;">作成する</button>
-          </div>
-  
-          <!-- マップ一覧 -->
-          {% for m in other_maps %}
-            <div class="map-card">
-              <a href="{% url 'map:map_view' m.id %}">{{ m.name }}</a>
-            </div>
-          {% empty %}
-            <p>他にマップはありません</p>
-          {% endfor %}
+    <div id="sidebar-footer">
+      <div id="my-map-toggle" onclick="toggleMapList()">Myマップ ▾</div>
+      <div id="my-map-list" style="display: none;">
+        <!-- マップ作成ボタン -->
+        <div style="margin-bottom: 10px;">
+          <button id="show-create-map-form" style="width: 100%;">＋ 新しいマップを作成</button>
         </div>
+
+        <!-- 入力フォーム（非表示） -->
+        <div id="create-map-form" style="display: none; margin-bottom: 15px;">
+          <input type="text" id="new-map-name" placeholder="マップ名" style="width: 100%; margin-bottom: 5px;">
+          <button id="submit-new-map" style="width: 100%;">作成する</button>
+        </div>
+
+        <!-- マップ一覧 -->
+        {% for m in other_maps %}
+        <div class="map-card">
+          <a href="{% url 'map:map_view' m.id %}">{{ m.name }}</a>
+        </div>
+        {% empty %}
+        <p>他にマップはありません</p>
+        {% endfor %}
       </div>
-      <!-- sidebar -->
+    </div>
+
+    <!-- sidebar main -->
     <div id="sidebar-main" style="display: none;">
-      <form id="spot-form">
-        <label>名前</label><br>
-        <input type="text" id="spot-name"><br><br>
-
-        <label>ジャンル</label><br>
-        <select id="spot-genre">
-          <option value="">選択してください</option>
-          <option value="カフェ">カフェ</option>
-          <option value="レストラン">レストラン</option>
-          <option value="観光">観光</option>
-          <option value="ショッピング">ショッピング</option>
-          <option value="ホテル">ホテル</option>
-          <option value="その他">その他</option>
-        </select><br><br>
-
-        <label>URL</label><br>
-        <input type="url" id="spot-url"><br><br>
-
-        <label>営業時間</label><br>
-        <input type="text" id="spot-hours"><br><br>
-
-        <label>メモ</label><br>
-        <textarea id="spot-memo" rows="4" cols="30"></textarea><br><br>
-
-        <button type="submit">保存</button>
-        <button type="button" id="delete-spot-btn" style="margin-top: 8px; margin-left: 130px;">削除</button>
-      </form>
+      <div class="spot-field">
+        <p><strong>名前:</strong> <span id="disp-name"></span><input type="text" id="spot-name" class="edit-field" style="display:none;"></p>
+        <p><strong>ジャンル:</strong> <span id="disp-genre"></span>
+          <select id="spot-genre" class="edit-field" style="display:none;">
+            <option value="">選択してください</option>
+            <option value="カフェ">カフェ</option>
+            <option value="レストラン">レストラン</option>
+            <option value="観光">観光</option>
+            <option value="ショッピング">ショッピング</option>
+            <option value="ホテル">ホテル</option>
+            <option value="その他">その他</option>
+          </select>
+        </p>
+        <p><strong>URL:</strong> <a id="disp-url" href="#" target="_blank"></a><input type="url" id="spot-url" class="edit-field" style="display:none;"></p>
+        <p><strong>営業時間:</strong> <span id="disp-hours"></span><input type="text" id="spot-hours" class="edit-field" style="display:none;"></p>
+        <p><strong>メモ:</strong> <span id="disp-memo"></span><textarea id="spot-memo" rows="4" cols="30" class="edit-field" style="display:none;"></textarea></p>
+      </div>
+      <div class="spot-buttons">
+        <button id="edit-spot-btn">編集</button>
+        <button id="save-spot-btn" style="display:none;">保存</button>
+        <button id="delete-spot-btn">削除</button>
+      </div>
     </div>
   </div>
-  
+
   <div id="mymap-name">{{ custom_map.name }}</div>
+
   <style>
     #mymap-name {
-  position: fixed;
-  top: 10px;
-  right: 15px;
-  background: rgba(255, 255, 255, 0.8);
-  color: #333;
-  padding: 4px 10px;
-  font-size: 12px;
-  border-radius: 5px;
-  box-shadow: 0 0 3px rgba(0,0,0,0.2);
-  z-index: 99999; /* ← ← ← ここで最前面に */
+      position: fixed;
+      top: 5px;
+      left: 255px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #333;
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 5px;
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+      z-index: 99999;
     }
   </style>
 
   <script>
     const MAP_ID = "{{ map_id|default:'' }}";
     const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const CREATE_MAP_URL = "{% url 'map:create_map' %}";
   </script>
 
   <script src="{% static 'map/mapList.js' %}"></script>
   <script src="{% static 'map/app.js' %}"></script>
-  
+
 </body>
 </html>

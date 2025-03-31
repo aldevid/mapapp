@@ -39,7 +39,7 @@ def create_map(request):
         CustomMap.objects.create(id=map_id, name=name)
         return JsonResponse({'status': 'ok', 'map_id': map_id}) 
 
-
+@csrf_exempt
 def add_spot(request, map_id):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -48,12 +48,17 @@ def add_spot(request, map_id):
             map=map_obj,
             name=data.get('name', ''),
             lat=data['lat'],
-            lng=data['lng']
+            lng=data['lng'],
+            memo=data.get('memo', ''),
+            genre=data.get('genre', ''),
+            url=data.get('url', ''),
+            hours=data.get('hours', '')
         )
         return JsonResponse({
             'status': 'okay',
             'id': spot.id
         })
+
 
 def get_spots(request, map_id):
     spots = Spot.objects.filter(map__id=map_id)
@@ -63,7 +68,10 @@ def get_spots(request, map_id):
             'name': s.name,
             'lat': s.lat,
             'lng': s.lng,
-            'memo': s.memo
+            'memo': s.memo,
+            'genre': s.genre,
+            'url': s.url,
+            'hours': s.hours,
         }
         for s in spots
     ]
