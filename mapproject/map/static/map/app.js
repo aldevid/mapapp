@@ -127,19 +127,30 @@ document.addEventListener('DOMContentLoaded', () => {
           if (data.status === 'okay') {
             const newId = String(data.id);
             document.getElementById('sidebar-main').dataset.spotId = newId;
-
+        
             if (currentTempMarker) {
+              // 保存されたピンとして更新
               currentTempMarker.spotData = {
                 id: newId,
                 lat: latLng.lat,
                 lng: latLng.lng,
                 name, genre, url, hours, memo
               };
+        
+              currentTempMarker.bindPopup(name);
+              currentTempMarker.on('click', function () {
+                openSidebarWithSpot(this.spotData);
+              });
+        
+              // currentTempMarker はもう仮ではなくなるので、nullにして消さないようにする
+              currentTempMarker = null;
             }
-
-            openSidebarWithSpot(currentTempMarker.spotData);
+        
+            // 表示モードに切り替え
+            showViewMode({ id: newId, name, genre, url, hours, memo });
           }
         })
+        
         .catch(err => {
           console.error('保存エラー:', err);
         });
