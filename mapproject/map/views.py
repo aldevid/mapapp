@@ -23,6 +23,8 @@ def map_view(request, map_id):
         'spots': spots,
         'other_maps': other_maps,
         'map_id': map_id,
+        'username': request.user.username, # <-この１行を追加
+        'display_map_name': custom_map.name,        # ← ここを追加
     })
 
 @login_required
@@ -32,6 +34,8 @@ def default_map_view(request):
         'custom_map': None,        # 表示されるマップ名は空
         'map_id': '',              # map_id が空 → JS側で「デフォルトモード」だと判定
         'other_maps': user_maps,   # サイドバーに表示するマイマップ一覧
+        'username': request.user.username,          # ← ユーザー名を渡す
+        'display_map_name': 'ホーム',                # ← 表示用マップ名を追加
     })
 
 @login_required

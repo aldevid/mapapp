@@ -89,7 +89,7 @@
     </div>
   </div>
 
-  <div id="mymap-name">{{ custom_map.name }}</div>
+  <div id="mymap-name">{{ username }}のマップ「{{ display_map_name }}」</div>
 
   <style>
     #mymap-name {
@@ -116,4 +116,28 @@
 
 
 </body>
+
+<div id="logout-link">
+  <a href="{% url 'accounts:logout' %}">🔓 ログアウト</a>
+</div>
+
+<style>
+  #logout-link {
+    position: fixed;
+    top: 5px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 4px 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+    z-index: 100000; /* 既存の右上表示より手前に来る */
+  }
+
+  #logout-link a {
+    text-decoration: none;
+    color: #333;
+    font-size: 12px;
+  }
+</style>
+
 </html>
