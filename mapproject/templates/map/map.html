@@ -13,6 +13,23 @@
   <link rel="stylesheet" href="{% static 'map/style.css' %}">
 </head>
 <body>
+    <!-- 人型ユーザーアイコン -->
+  <div id="user-icon-button">
+    👤
+  </div>
+
+  <!-- ユーザーメニュー（非表示） -->
+  <div id="user-menu-overlay" class="hidden">
+    <div id="user-menu">
+      <h3>ユーザー設定</h3>
+      <!-- 将来的に以下を追加予定 -->
+      <!-- <button>ユーザー名を変更</button>
+      <button>メールアドレスを変更</button>
+      <button>アイコンを変更</button> -->
+      <hr />
+      <a href="{% url 'accounts:logout' %}" class="logout-link">🔓 ログアウト</a>
+    </div>
+  </div>
 
   <div id="map"></div>
 
@@ -116,28 +133,5 @@
 
 
 </body>
-
-<div id="logout-link">
-  <a href="{% url 'accounts:logout' %}">🔓 ログアウト</a>
-</div>
-
-<style>
-  #logout-link {
-    position: fixed;
-    top: 5px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 4px 10px;
-    border-radius: 5px;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-    z-index: 100000; /* 既存の右上表示より手前に来る */
-  }
-
-  #logout-link a {
-    text-decoration: none;
-    color: #333;
-    font-size: 12px;
-  }
-</style>
 
 </html>
