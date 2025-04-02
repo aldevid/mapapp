@@ -3,9 +3,23 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, UserChangeForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
+
+@login_required
+def change_user_info(request):
+    if request.method == 'POST':
+        form = UserChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'ユーザー情報を更新しました。')
+        else:
+            messages.error(request, '入力に誤りがあります。')
+
+    # ✅ hiddenで渡された `next` にリダイレクト（安全＆確実）
+    next_url = request.POST.get('next', '/')
+    return redirect(next_url)
 
 @never_cache
 def login_view(request):

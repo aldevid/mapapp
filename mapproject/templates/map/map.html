@@ -22,10 +22,36 @@
   <div id="user-menu-overlay" class="hidden">
     <div id="user-menu">
       <h3>ユーザー設定</h3>
-      <!-- 将来的に以下を追加予定 -->
-      <!-- <button>ユーザー名を変更</button>
-      <button>メールアドレスを変更</button>
-      <button>アイコンを変更</button> -->
+    
+      <!-- ✅ メッセージ表示ここに追加 -->
+      {% if messages %}
+        <ul class="message-list" style="margin-bottom: 10px;">
+          {% for message in messages %}
+            <li style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %};">
+              {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    
+      <!-- フォーム本体 -->
+      <form method="POST" action="{% url 'accounts:change_user_info' %}" style="margin-top: 10px;">
+        {% csrf_token %}
+        
+        <!-- ✅ 現在のページURLを hidden で渡す -->
+        <input type="hidden" name="next" value="{{ request.path }}">
+      
+        <div style="margin-bottom: 8px;">
+          <label for="username">ユーザー名</label><br>
+          <input type="text" name="username" id="username" value="{{ username }}" required style="width: 100%;">
+        </div>
+        <div style="margin-bottom: 8px;">
+          <label for="email">メールアドレス</label><br>
+          <input type="email" name="email" id="email" value="{{ email }}" required style="width: 100%;">
+        </div>
+        <button type="submit" style="width: 100%;">保存</button>
+      </form>      
+    
       <hr />
       <a href="{% url 'accounts:logout' %}" class="logout-link">🔓 ログアウト</a>
     </div>
