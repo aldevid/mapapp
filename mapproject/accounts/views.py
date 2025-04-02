@@ -3,9 +3,10 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from .forms import CustomUserCreationForm, UserChangeForm
+from .forms import CustomUserCreationForm, UserChangeForm, ProfileImageForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
+from .models import UserProfile
 
 @login_required
 def change_user_info(request):
@@ -20,6 +21,19 @@ def change_user_info(request):
     # ✅ hiddenで渡された `next` にリダイレクト（安全＆確実）
     next_url = request.POST.get('next', '/')
     return redirect(next_url)
+
+@login_required
+def change_profile_image(request):
+    if request.method == 'POST':
+        profile = request.user.userprofile
+        form = ProfileImageForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'プロフィール画像を更新しました。')
+        else:
+            messages.error(request, '画像のアップロードに失敗しました。')
+
+    return redirect(request.POST.get('next', '/'))
 
 @never_cache
 def login_view(request):

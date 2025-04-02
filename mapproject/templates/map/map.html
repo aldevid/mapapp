@@ -14,9 +14,13 @@
 </head>
 <body>
     <!-- 人型ユーザーアイコン -->
-  <div id="user-icon-button">
-    👤
-  </div>
+    <div id="user-icon-button">
+      {% if user.userprofile.profile_image %}
+        <img src="{{ user.userprofile.profile_image.url }}" alt="アイコン" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+      {% else %}
+        👤
+      {% endif %}
+    </div>    
 
   <!-- ユーザーメニュー（非表示） -->
   <div id="user-menu-overlay" class="hidden">
@@ -51,7 +55,18 @@
         </div>
         <button type="submit" style="width: 100%;">保存</button>
       </form>      
-    
+
+      <!-- プロフィール画像アップロードフォーム -->
+      <form method="POST" action="{% url 'accounts:change_profile_image' %}" enctype="multipart/form-data" style="margin-top: 10px;">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+
+        <label for="profile_image">プロフィール画像を選択：</label><br>
+        <input type="file" name="profile_image" accept="image/*" required style="margin-bottom: 8px;"><br>
+
+        <button type="submit" style="width: 100%;">画像を変更</button>
+      </form>
+
       <hr />
       <a href="{% url 'accounts:logout' %}" class="logout-link">🔓 ログアウト</a>
     </div>
