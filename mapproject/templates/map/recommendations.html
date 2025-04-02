@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>おすすめマップ一覧</title>
+  <link rel="stylesheet" href="{% static 'map/style.css' %}">
+  <style>
+    .map-list { padding: 20px; }
+    .map-card { margin-bottom: 15px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; background: #fff; }
+    .map-card a { display: inline-block; margin-top: 5px; }
+  </style>
+</head>
+<body>
+
+  <div class="map-list">
+    <h1>みんなのおすすめマップ</h1>
+
+    <form method="get" action="">
+      <input type="text" name="q" value="{{ query }}" placeholder="例: 東京, カフェ, 海外">
+      <button type="submit">検索</button>
+    </form>
+
+    <hr>
+
+    {% for m in maps %}
+      <div class="map-card">
+        <h3>{{ m.name }}</h3>
+        <p><strong>ジャンル:</strong> {{ m.genre }}</p>
+        <p><strong>説明:</strong> {{ m.description|default:"（説明なし）" }}</p>
+        <p><strong>作成者:</strong> {{ m.user.username }}</p>
+        <a href="{% url 'map:map_view' m.id %}">▶ このマップをひらく</a>
+      </div>
+    {% empty %}
+      <p>該当するおすすめマップはありません。</p>
+    {% endfor %}
+  </div>
+
+</body>
+</html>

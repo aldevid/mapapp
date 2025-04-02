@@ -1,3 +1,6 @@
+// mapCore.js
+const isDefaultMap = String(IS_DEFAULT_MAP) === "true";
+
 let map;
 let currentTempMarker = null;
 
@@ -87,12 +90,26 @@ function openSidebarWithSpot(spot) {
 
   sidebar.dataset.spotId = spot.id && spot.id !== 'null' ? String(spot.id) : '';
 
+  // ✅ 表示切り替え（短い遅延でDOM描画を待つ）
+  setTimeout(() => {
+    const mapSelectWrapper = document.getElementById('map-select-wrapper');
+    const isDefault = typeof IS_DEFAULT_MAP !== 'undefined' && IS_DEFAULT_MAP === true;
+    if (isDefault && mapSelectWrapper) {
+      mapSelectWrapper.style.display = 'block';
+    } else if (mapSelectWrapper) {
+      mapSelectWrapper.style.display = 'none';
+    }
+  }, 0);  // ← これでDOMが確実に存在してから処理される
+
   if (isNew) {
     enterEditMode();
   } else {
     showViewMode(spot);
   }
 }
+
+
+
 
 function enterEditMode() {
   document.querySelectorAll('.edit-field').forEach(el => el.style.display = 'inline');
@@ -151,6 +168,7 @@ document.getElementById('save-spot-btn')?.addEventListener('click', () => {
   const memo = document.getElementById('spot-memo').value;
   const icon = document.getElementById('spot-icon').value;
   const latLng = currentTempMarker ? currentTempMarker.getLatLng() : null;
+  const mapIdForSave = isDefaultMap ? document.getElementById('select-map-id')?.value : MAP_ID;
 
   const payload = { name, genre, url, hours, memo, icon };
 
@@ -158,8 +176,15 @@ document.getElementById('save-spot-btn')?.addEventListener('click', () => {
     if (!latLng) return;
     payload.lat = latLng.lat;
     payload.lng = latLng.lng;
+    if (mapIdForSave) {
+      payload.map_id = mapIdForSave;
+    }
 
-    fetch(`/map/${MAP_ID}/spots/add/`, {
+    const postUrl = isDefaultMap
+      ? '/map/default/spots/add/'
+      : `/map/${MAP_ID}/spots/add/`;
+
+    fetch(postUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -167,27 +192,32 @@ document.getElementById('save-spot-btn')?.addEventListener('click', () => {
       },
       body: JSON.stringify(payload)
     })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === 'okay') {
-          const newId = String(data.id);
-          document.getElementById('sidebar-main').dataset.spotId = newId;
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'okay') {
+        const newId = String(data.id);
+        document.getElementById('sidebar-main').dataset.spotId = newId;
 
-          if (currentTempMarker) {
-            currentTempMarker.spotData = { id: newId, ...payload, lat: latLng.lat, lng: latLng.lng };
-            currentTempMarker.setIcon(getColoredIcon(icon));
-            currentTempMarker.bindPopup(name);
-            currentTempMarker.on('click', function () {
-              openSidebarWithSpot(this.spotData);
-            });
-            currentTempMarker = null;
-          }
-
-          showViewMode({ id: newId, ...payload });
+        if (currentTempMarker) {
+          currentTempMarker.spotData = { id: newId, ...payload, lat: latLng.lat, lng: latLng.lng };
+          currentTempMarker.setIcon(getColoredIcon(icon));
+          currentTempMarker.bindPopup(name);
+          currentTempMarker.on('click', function () {
+            openSidebarWithSpot(this.spotData);
+          });
+          currentTempMarker = null;
         }
-      });
+
+        showViewMode({ id: newId, ...payload });
+      }
+    });
+
   } else {
-    fetch(`/map/${MAP_ID}/spots/${spotId}/update/`, {
+    const updateUrl = isDefaultMap
+      ? `/map/default/spots/${spotId}/update/`
+      : `/map/${MAP_ID}/spots/${spotId}/update/`;
+
+    fetch(updateUrl, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -195,38 +225,43 @@ document.getElementById('save-spot-btn')?.addEventListener('click', () => {
       },
       body: JSON.stringify(payload)
     })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === 'updated') {
-          showViewMode({ id: spotId, ...payload });
-        }
-      });
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'updated') {
+        showViewMode({ id: spotId, ...payload });
+      }
+    });
   }
 });
 
-document.getElementById('delete-spot-btn')?.addEventListener('click', function () {
-  const spotId = document.getElementById('sidebar-main').dataset.spotId;
-  if (!spotId || spotId === 'null' || !confirm("このスポットを削除しますか？")) return;
 
-  fetch(`/map/${MAP_ID}/spots/${spotId}/delete/`, {
+document.getElementById('delete-spot-btn')?.addEventListener('click', () => {
+  const spotId = document.getElementById('sidebar-main').dataset.spotId;
+  if (!spotId || !confirm("このスポットを削除しますか？")) return;
+
+  const deleteUrl = isDefaultMap
+    ? `/map/default/spots/${spotId}/delete/`
+    : `/map/${MAP_ID}/spots/${spotId}/delete/`;
+
+  fetch(deleteUrl, {
     method: 'DELETE',
     headers: {
       'X-CSRFToken': getCsrfToken()
     }
   })
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === 'deleted') {
-        map.eachLayer(layer => {
-          if (layer instanceof L.Marker && layer.spotData && layer.spotData.id == spotId) {
-            map.removeLayer(layer);
-          }
-        });
-
-        document.getElementById('sidebar-main').style.display = 'none';
-      }
-    });
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === 'deleted') {
+      map.eachLayer(layer => {
+        if (layer instanceof L.Marker && layer.spotData && layer.spotData.id == spotId) {
+          map.removeLayer(layer);
+        }
+      });
+      document.getElementById('sidebar-main').style.display = 'none';
+    }
+  });
 });
+
 
 function getColoredIcon(color) {
   const pinColors = {
