@@ -114,6 +114,18 @@ html, body {
 
 /* recommend mymap */
 
+/* ======== おすすめマップ一覧のパネル ======== */
+#recommend-list {
+  position: fixed; /* ボタンの下に表示されるように */
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  display: none;
+  z-index: 9998;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
 #recommend-link {
   position: fixed;
   top: 10px;

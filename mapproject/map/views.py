@@ -2,11 +2,13 @@
 import random
 import string
 import json
+from django.urls import reverse  # ← これを先頭で追加！
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
+import xml.etree.ElementTree as ET
 from django.db.models import Q
 from django.http import JsonResponse
 from .models import CustomMap, Spot
@@ -261,3 +263,47 @@ def delete_spot(request, map_id, spot_id):
         return JsonResponse({'status': 'deleted'})
     except Spot.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Spot not found'}, status=404)
+
+
+# mapdata import kml
+
+@login_required
+def kml_upload_view(request):
+    if request.method == "POST" and request.FILES.get("kml_file"):
+        kml_file = request.FILES["kml_file"]
+        tree = ET.parse(kml_file)
+        root = tree.getroot()
+        ns = {'kml': 'http://www.opengis.net/kml/2.2'}
+        placemarks = root.findall('.//kml:Placemark', ns)
+
+        # ✅ デフォルトマップ（is_default=True）を取得
+        default_map, _ = CustomMap.objects.get_or_create(
+            user=request.user,
+            is_system_default=True,
+            defaults={
+                "id": "default-" + ''.join(random.choices(string.ascii_lowercase + string.digits, k=8)),
+                "name": "デフォルト保存スポット",
+            }
+        )
+        for placemark in placemarks:
+            name_el = placemark.find('kml:name', ns)
+            coords_el = placemark.find('.//kml:coordinates', ns)
+            if name_el is not None and coords_el is not None:
+                try:
+                    lon, lat, *_ = coords_el.text.strip().split(',')
+                    Spot.objects.create(
+                        map=default_map,
+                        name=name_el.text,
+                        lat=float(lat),
+                        lng=float(lon),
+                        memo="(KMLから追加)"
+                    )
+                except Exception as e:
+                    print("KML解析エラー:", e)
+
+        print('アップロード完了/mapにリダイレクトしました')
+        return redirect(reverse("map:default_map"))
+    print('getアクセスきたため/mapにリダイレクト')
+    return redirect(reverse("map:default_map"))
+
+

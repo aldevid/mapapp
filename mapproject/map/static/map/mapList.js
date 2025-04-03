@@ -79,8 +79,18 @@ export function setupMapListUI() {
   document.getElementById('recommend-toggle')?.addEventListener('click', () => {
     const list = document.getElementById('recommend-list');
     const toggle = document.getElementById('recommend-toggle');
-
-    if (list.style.display === 'none') {
+  
+    if (list.style.display === 'none' || list.style.display === '') {
+      // 一旦表示してサイズ取得
+      list.style.display = 'block';
+      list.style.position = 'fixed';
+  
+      const toggleRect = toggle.getBoundingClientRect();
+      list.style.width = `${toggle.offsetWidth}px`;
+      list.style.left = `${toggleRect.left}px`;  // ← scrollX不要、fixedならviewport基準
+      list.style.top = `${toggleRect.bottom + 5}px`; // 少し下にオフセット
+  
+      // データ取得して中身入れる
       fetch('/map/recommendations/json/')
         .then(res => res.json())
         .then(data => {
@@ -92,14 +102,15 @@ export function setupMapListUI() {
             </div>
           `).join('');
           document.getElementById('recommend-content').innerHTML = html || '<p>おすすめマップはまだありません。</p>';
-          list.style.display = 'block';
-          toggle.textContent = '⭐ おすすめマップ一覧 ▴';
+          toggle.textContent = 'おすすめマップ ▴';
         });
+  
     } else {
       list.style.display = 'none';
-      toggle.textContent = '⭐ おすすめマップ一覧 ▾';
+      document.getElementById('recommend-toggle').textContent = 'おすすめマップ ▾';
     }
   });
+  
 
   // ⚙️ マップ設定の開閉
   document.getElementById('settings-toggle')?.addEventListener('click', () => {
@@ -107,12 +118,13 @@ export function setupMapListUI() {
     const settings = document.getElementById('map-settings');
     const toggle = document.getElementById('settings-toggle');
 
+    const icon ='👍';
     if (settings.style.display === 'none' || settings.style.display === '') {
       settings.style.display = 'block';
-      toggle.textContent = '⚙️ マップ設定 ▴';
+      toggle.textContent = `${icon}`;
     } else {
       settings.style.display = 'none';
-      toggle.textContent = '⚙️ マップ設定 ▾';
+      toggle.textContent = `${icon}`;
     }
   });
 }

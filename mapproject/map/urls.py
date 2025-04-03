@@ -4,6 +4,7 @@ from . import views
 app_name = 'map'
 
 urlpatterns = [
+    
     path('', views.default_map_view, name='default_map'),
     path('default/spots/', views.get_default_spots, name='get_default_spots'),
     path('default/spots/add/', views.add_spot_default, name='add_spot_default'),
@@ -12,6 +13,8 @@ urlpatterns = [
 
     path('create/', views.create_map, name='create_map'),
     path('create/ajax/', views.create_map_ajax, name='create_map_ajax'),
+
+    path("upload-kml/", views.kml_upload_view, name="upload_kml"),
 
     path('<str:map_id>/', views.map_view, name='map_view'),
     path('<str:map_id>/spots/', views.get_spots, name='get_spots'),
@@ -22,4 +25,5 @@ urlpatterns = [
     path('<str:map_id>/update_settings/', views.update_map_settings, name='update_map_settings'),
     path('recommendations/', views.recommended_maps_view, name='recommended_maps'),
     path('recommendations/json/', views.recommended_maps_json, name='recommended_maps_json'),
+
 ]

@@ -23,61 +23,53 @@
 
       <!-- Myマップトグル -->
       <div id="my-map-toggle">Myマップ ▾</div>
-
-      <!-- マップ設定フォーム（おすすめ・ジャンル・説明） -->
-      <div id="map-settings" style="padding: 10px; border-top: 1px solid #ffffff; display: none;">
-        <h4>このマップの設定</h4>
-        <form id="map-settings-form">
-          <label>
-            <input type="checkbox" id="is-recommended"> おすすめする👍
-          </label><br><br>
-
-          <label for="map-genre">ジャンル:</label><br>
-          <select id="map-genre" style="width: 100%; margin-bottom: 10px;">
-            <option value="">選択してください</option>
-            <option value="カフェ">カフェ</option>
-            <option value="レストラン">レストラン</option>
-            <option value="観光">観光</option>
-            <option value="ショッピング">ショッピング</option>
-            <option value="ホテル">ホテル</option>
-            <option value="その他">その他</option>
-          </select>
-
-          <label for="map-description">説明:</label><br>
-          <textarea id="map-description" rows="5" style="width: 100%; margin-bottom: 10px;" placeholder="このマップの説明を書いてね"></textarea>
-
-          <button type="button" id="save-map-settings">保存</button>
+      
+      <!-- マイマップ一覧のちょっと上に追加するのが◎ -->
+      {% if is_default %}
+      <div style="margin: 10px 0;">
+        <form action="{% url 'map:upload_kml' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="file" name="kml_file" accept=".kml" required>
+          <button type="submit">アップロード</button>
         </form>
       </div>
+      {% endif %}      
+      
+      <script>
+        // ファイル選択後に自動で送信
+        document.getElementById('kml-file-input').addEventListener('change', function () {
+          document.getElementById('kml-upload-form').submit();
+        });
+        </script>
 
       <!-- マイマップ一覧 -->
       <div id="my-map-list" style="display: none;">
         <a href="{% url 'map:default_map' %}" class="map-card" style="background-color: #f5f5f5; font-weight: bold;">🏠ホーム</a>
-
+        
         <!-- マップ作成 -->
         <div style="margin-bottom: 10px;">
           <button id="show-create-map-form" style="width: 100%;">+ 新しいマップを作成</button>
         </div>
-
+        
         <!-- 作成フォーム -->
         <div id="create-map-form" style="display: none; margin-bottom: 15px;">
           <input type="text" id="new-map-name" placeholder="マップ名" style="width: 100%; margin-bottom: 5px;">
           <button id="submit-new-map" style="width: 100%;">作成する</button>
         </div>
-
+        
         <!-- マイマップ一覧 -->
-<!-- マイマップ一覧 -->
-      {% for m in other_maps %}
+        <!-- マイマップ一覧 -->
+        {% for m in other_maps %}
         {% if m.name != "デフォルト保存スポット" %}
-          <a href="{% url 'map:map_view' m.id %}" class="map-card">{{ m.name }}</a>
+        <a href="{% url 'map:map_view' m.id %}" class="map-card">{{ m.name }}</a>
         {% endif %}
-      {% empty %}
+        {% empty %}
         <p>他にマップはありません</p>
-      {% endfor %}
-
+        {% endfor %}
+        
       </div>
     </div>
-
+    
     <!-- スポット詳細・編集パネル -->
     <div id="sidebar-main" style="display: none;">
       <div class="spot-field">
@@ -107,21 +99,21 @@
             <option value="purple">紫</option>
           </select>
         </p>
-<!-- スポット編集エリアに追加（デフォルトマップのみで表示） -->
+        <!-- スポット編集エリアに追加（デフォルトマップのみで表示） -->
         {% if is_default %}
-          <p id="map-select-wrapper" style="display: none;">
-            <label>追加するマイマップ</label>
-            <select id="select-map-id" style="width: 100%; margin-bottom: 10px;">
-              <option value="">ホーム</option>
-              {% for m in other_maps %}
-                {% if m.name != "デフォルト保存スポット" %}
-                  <option value="{{ m.id }}">{{ m.name }}</option>
-                {% endif %}
-              {% endfor %}
-            </select>
-          </p>
+        <p id="map-select-wrapper" style="display: none;">
+          <label>追加するマイマップ</label>
+          <select id="select-map-id" style="width: 100%; margin-bottom: 10px;">
+            <option value="">ホーム</option>
+            {% for m in other_maps %}
+            {% if m.name != "デフォルト保存スポット" %}
+            <option value="{{ m.id }}">{{ m.name }}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+        </p>
         {% endif %}
-
+        
         
       </div>
       <div class="spot-buttons">
@@ -131,10 +123,10 @@
       </div>
     </div>
   </div>
-
+  
   <!-- 現在のマップ名表示 -->
   <div id="mymap-name">{{ custom_map.name }}</div>
-
+  
   <style>
     #mymap-name {
       position: fixed;
@@ -148,20 +140,57 @@
       box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
       z-index: 99999;
     }
-  </style>
+    </style>
 
-  <!-- トップ右上ボタン群 -->
-  <div id="recommend-toggle" style="position: fixed; top: 10px; right: 15px; z-index: 9999; cursor: pointer; background: #fff; padding: 6px 12px; border-radius: 5px; border: 1px solid #ccc;">
-    ⭐ おすすめマップ一覧 ▾
-  </div>
-  <div id="settings-toggle" style="position: fixed; top: 10px; right: 230px; z-index: 9999; cursor: pointer; background: #fff; padding: 6px 12px; border-radius: 5px; border: 1px solid #ccc;">
-    ⚙️ マップ設定 ▾
-  </div>
+<!-- トップ右上ボタン群 -->
+<div id="recommend-toggle" style="position: fixed; top: 10px; right: 15px; z-index: 9999; cursor: pointer; background: #fff; padding: 6px 12px; border-radius: 5px; border: 1px solid #ccc;">
+  おすすめマップ ▾
+</div>
+<div id="settings-toggle" style="position: fixed; top: 10px; right: 170px; z-index: 9999; cursor: pointer; background: #fff; padding: 6px 12px; border-radius: 5px; border: 1px solid #ccc;">
+  👍
+</div>
 
-  <!-- おすすめマップ一覧（右側パネル） -->
-  <div id="recommend-list" style="position: fixed; top: 50px; right: 20px; width: 300px; max-height: 400px; overflow-y: auto; background: #fff; border: 1px solid #ccc; border-radius: 5px; padding: 10px; display: none; z-index: 9998;">
+<div id="map-settings" style="
+  position: absolute;
+  top: 50px;
+  right: 170px;
+  width: 260px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  padding: 12px;
+  display: none;
+  z-index: 9998;
+">
+  <h4>このマップの設定</h4>
+  <form id="map-settings-form">
+    <label>
+      <input type="checkbox" id="is-recommended"> おすすめする
+    </label><br><br>
+
+    <label for="map-genre">ジャンル:</label><br>
+    <select id="map-genre" style="width: 100%; margin-bottom: 10px;">
+      <option value="">選択してください</option>
+      <option value="カフェ">カフェ</option>
+      <option value="レストラン">レストラン</option>
+      <option value="観光">観光</option>
+      <option value="ショッピング">ショッピング</option>
+      <option value="ホテル">ホテル</option>
+      <option value="その他">その他</option>
+    </select>
+
+    <label for="map-description">説明:</label><br>
+    <textarea id="map-description" rows="5" style="width: 100%; margin-bottom: 10px;" placeholder="このマップの説明を書いてね"></textarea>
+
+    <button type="button" id="save-map-settings">保存</button>
+  </form>
+</div>
+<!-- おすすめマップ一覧（右側パネル） -->
+  <div id="recommend-list">
     <div id="recommend-content">読み込み中...</div>
   </div>
+
 
   <!-- JavaScript定義 -->
   <script>
