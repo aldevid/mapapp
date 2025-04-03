@@ -5,16 +5,17 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from .forms import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
+@never_cache
 def login_view(request):
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('map:index')  # ログイン後にリダイレクト
+            return redirect('map:default_map')
         else:
-            # ログイン失敗時にエラーメッセージを表示
             messages.error(request, 'ユーザー名またはパスワードが違います')
     else:
         form = AuthenticationForm()

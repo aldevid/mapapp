@@ -110,3 +110,40 @@ html, body {
 .map-card:hover {
   background-color: #e6f7ff;
 }
+
+
+/* recommend mymap */
+
+/* ======== おすすめマップ一覧のパネル ======== */
+#recommend-list {
+  position: fixed; /* ボタンの下に表示されるように */
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  display: none;
+  z-index: 9998;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#recommend-link {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  background: #ffffffcc;
+  color: #333;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 9999;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: background 0.2s;
+}
+
+#recommend-link:hover {
+  background: #f0f0f0;
+}
+
