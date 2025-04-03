@@ -78,6 +78,7 @@ function closeMapListIfOpen() {
 
 function openSidebarWithSpot(spot) {
   window.openSidebar();
+  
   const isNew = !spot.id || spot.id === "null";
   const sidebar = document.getElementById('sidebar-main');
   const sidebarWrapper = document.getElementById('sidebar');
