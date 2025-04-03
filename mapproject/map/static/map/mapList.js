@@ -130,4 +130,18 @@ export function setupMapListUI() {
       document.getElementById('recommend-toggle').textContent = 'おすすめマップ';
     }
   });
+
+    // サイドバーの開閉（×ボタン）
+    const sidebar = document.getElementById("sidebar");
+    const closeBtn = document.getElementById("close-sidebar-btn");
+  
+    closeBtn?.addEventListener("click", () => {
+      sidebar.classList.add("hidden");
+    });
+  
+    // グローバルに公開：ピンから呼び出すため
+    window.openSidebar = () => {
+      sidebar.classList.remove("hidden");
+    };
+  
 }

@@ -77,10 +77,15 @@ function closeMapListIfOpen() {
 }
 
 function openSidebarWithSpot(spot) {
+  window.openSidebar();
   const isNew = !spot.id || spot.id === "null";
   const sidebar = document.getElementById('sidebar-main');
-  sidebar.style.display = 'block';
+  const sidebarWrapper = document.getElementById('sidebar');
 
+  sidebarWrapper.classList.remove('hidden');
+
+  sidebar.style.display = 'block';
+  document.getElementById('sidebar')?.classList.add('visible');
   document.getElementById('spot-name').value = spot.name || '';
   document.getElementById('spot-memo').value = spot.memo || '';
   document.getElementById('spot-genre').value = spot.genre || '';
