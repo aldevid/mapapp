@@ -2,7 +2,7 @@ services:
   - type: web
     name: recomap
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r mapproject/requirements.txt
     startCommand: gunicorn mapproject.wsgi:application --chdir mapproject
     envVars:
       - key: DJANGO_SECRET_KEY
