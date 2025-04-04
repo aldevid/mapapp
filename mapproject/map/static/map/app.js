@@ -32,4 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     console.warn("❌ userIcon or overlay not found");
   }
+
+  const closeUserMenuBtn = document.getElementById('close-user-menu-btn');
+  if (closeUserMenuBtn && overlay) {
+    closeUserMenuBtn.addEventListener('click', () => {
+      console.log("❌ close button clicked");
+      overlay.classList.add('hidden');
+    });
+  }
+
 });

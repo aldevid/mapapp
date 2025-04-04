@@ -17,16 +17,17 @@
 <body>
     <!-- 人型ユーザーアイコン -->
     <div id="user-icon-button">
-      {% if user.userprofile.profile_image %}
-        <img src="{{ user.userprofile.profile_image.url }}" alt="アイコン" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
-      {% else %}
-        👤
-      {% endif %}
+      {% if user.userprofile and user.userprofile.profile_image %}
+      <img src="{{ user.userprofile.profile_image.url }}" alt="アイコン" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+    {% else %}
+      👤
+    {% endif %}    
     </div>    
 
   <!-- ユーザーメニュー（非表示） -->
   <div id="user-menu-overlay" class="hidden">
     <div id="user-menu">
+      <button id="close-user-menu-btn" class="close-user-menu" aria-label="閉じる">&times;</button>
       <h3>ユーザー設定</h3>
     
       <!-- ✅ メッセージ表示ここに追加 -->
