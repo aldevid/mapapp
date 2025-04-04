@@ -114,6 +114,28 @@ export function setupMapListUI() {
     }
   });
 
+  function filterRecommendMaps() {
+    const keyword = document.getElementById('map-search-input').value.toLowerCase();
+    const genre = document.getElementById('genre-filter').value;
+  
+    const cards = document.querySelectorAll('.recommend-card');
+  
+    cards.forEach(card => {
+      const name = card.dataset.name.toLowerCase();
+      const cardGenre = card.dataset.genre;
+  
+      const matchName = name.includes(keyword);
+      const matchGenre = genre === "" || genre === cardGenre;
+  
+      card.style.display = (matchName && matchGenre) ? "block" : "none";
+    });
+  }
+  
+  document.getElementById('map-search-input').addEventListener('input', filterRecommendMaps);
+  document.getElementById('genre-filter').addEventListener('change', filterRecommendMaps);
+
+  
+  
   // ⚙️ マップ設定の開閉
   document.getElementById('settings-toggle')?.addEventListener('click', () => {
     const settings = document.getElementById('map-settings');

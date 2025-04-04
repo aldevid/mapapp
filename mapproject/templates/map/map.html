@@ -9,6 +9,7 @@
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
     
     {% load static %}
     <link rel="stylesheet" href="{% static 'map/style.css' %}">
@@ -138,7 +139,12 @@
     <!-- スポット詳細・編集パネル -->
     <div id="sidebar-main" style="display: none;">
       <div class="spot-field">
-        <p><strong>名前</strong><span id="disp-name"></span><span id="icon-display"></span><input type="text" id="spot-name" class="edit-field" style="display:none;"></p>
+        <p style="display: flex; align-items: center; gap: 6px;">
+          <label class="edit-field" id="label-name" style="display: none;"><strong>名前</strong></label>
+          <span id="disp-name" style="font-weight: bold; font-size: 23px;"></span>
+          <span id="icon-display"></span>
+          <input type="text" id="spot-name" class="edit-field" style="display:none;">
+        </p>
         <p><strong>ジャンル</strong><span id="disp-genre"></span>
           <select id="spot-genre" class="edit-field" style="display:none;">
             <option value="">選択してください</option>
@@ -167,7 +173,7 @@
         <!-- スポット編集エリアに追加（デフォルトマップのみで表示） -->
         {% if is_default %}
         <p id="map-select-wrapper" style="display: none;">
-          <label>追加するマイマップ</label>
+          <label>追加先のマイマップ</label>
           <select id="select-map-id" style="width: 100%; margin-bottom: 10px;">
             <option value="">ホーム</option>
             {% for m in other_maps %}
@@ -207,13 +213,55 @@
     <label for="map-genre">ジャンル</label><br>
     <select id="map-genre" style="width: 100%; margin-bottom: 10px;">
       <option value="">選択してください</option>
-      <option value="カフェ">カフェ</option>
-      <option value="レストラン">レストラン</option>
-      <option value="観光">観光</option>
-      <option value="ショッピング">ショッピング</option>
-      <option value="ホテル">ホテル</option>
-      <option value="その他">その他</option>
+    
+      <optgroup label="グルメ">
+        <option value="カフェ">カフェ</option>
+        <option value="レストラン">レストラン</option>
+        <option value="居酒屋">居酒屋</option>
+        <option value="バー">バー</option>
+        <option value="スイーツ">スイーツ</option>
+      </optgroup>
+    
+      <optgroup label="観光・文化">
+        <option value="観光">観光</option>
+        <option value="自然">自然</option>
+        <option value="歴史スポット">歴史スポット</option>
+        <option value="神社・寺">神社・寺</option>
+        <option value="博物館・美術館">博物館・美術館</option>
+      </optgroup>
+    
+      <optgroup label="レジャー・遊び">
+        <option value="アクティビティ">アクティビティ</option>
+        <option value="テーマパーク">テーマパーク</option>
+        <option value="動物園・水族館">動物園・水族館</option>
+        <option value="ライブ・イベント">ライブ・イベント</option>
+        <option value="映画館・劇場">映画館・劇場</option>
+      </optgroup>
+    
+      <optgroup label="ショッピング">
+        <option value="ショッピング">ショッピング</option>
+        <option value="商業施設">商業施設</option>
+        <option value="アウトレット">アウトレット</option>
+      </optgroup>
+    
+      <optgroup label="宿泊・癒し">
+        <option value="ホテル">ホテル</option>
+        <option value="温泉・スパ">温泉・スパ</option>
+      </optgroup>
+    
+      <optgroup label="アウトドア">
+        <option value="ハイキング・登山">ハイキング・登山</option>
+        <option value="展望台・夜景">展望台・夜景</option>
+        <option value="写真スポット">写真スポット</option>
+      </optgroup>
+    
+      <optgroup label="その他">
+        <option value="スポーツ施設">スポーツ施設</option>
+        <option value="駅・交通">駅・交通</option>
+        <option value="その他">その他</option>
+      </optgroup>
     </select>
+    
 
     <label for="map-description">説明</label><br>
     <textarea id="map-description" rows="5" style="width: 100%; margin-bottom: 10px;" placeholder="このマップの説明を書いてね"></textarea>
@@ -223,6 +271,59 @@
 </div>
 <!-- おすすめマップ一覧（右側パネル） -->
   <div id="recommend-list">
+    <!-- おすすめマップ検索フォーム -->
+    <div id="recommend-search-controls" style="padding: 10px;">
+      <input type="text" id="map-search-input" placeholder="マップ名で検索" style="width: 100%; margin-bottom: 8px;">
+      <select id="genre-filter" style="width: 100%;">
+        <optgroup label="グルメ">
+          <option value="カフェ">カフェ</option>
+          <option value="レストラン">レストラン</option>
+          <option value="居酒屋">居酒屋</option>
+          <option value="バー">バー</option>
+          <option value="スイーツ">スイーツ</option>
+        </optgroup>
+      
+        <optgroup label="観光・文化">
+          <option value="観光">観光</option>
+          <option value="自然">自然</option>
+          <option value="歴史スポット">歴史スポット</option>
+          <option value="神社・寺">神社・寺</option>
+          <option value="博物館・美術館">博物館・美術館</option>
+        </optgroup>
+      
+        <optgroup label="レジャー・遊び">
+          <option value="アクティビティ">アクティビティ</option>
+          <option value="テーマパーク">テーマパーク</option>
+          <option value="動物園・水族館">動物園・水族館</option>
+          <option value="ライブ・イベント">ライブ・イベント</option>
+          <option value="映画館・劇場">映画館・劇場</option>
+        </optgroup>
+      
+        <optgroup label="ショッピング">
+          <option value="ショッピング">ショッピング</option>
+          <option value="商業施設">商業施設</option>
+          <option value="アウトレット">アウトレット</option>
+        </optgroup>
+      
+        <optgroup label="宿泊・癒し">
+          <option value="ホテル">ホテル</option>
+          <option value="温泉・スパ">温泉・スパ</option>
+        </optgroup>
+      
+        <optgroup label="アウトドア">
+          <option value="ハイキング・登山">ハイキング・登山</option>
+          <option value="展望台・夜景">展望台・夜景</option>
+          <option value="写真スポット">写真スポット</option>
+        </optgroup>
+      
+        <optgroup label="その他">
+          <option value="スポーツ施設">スポーツ施設</option>
+          <option value="駅・交通">駅・交通</option>
+          <option value="その他">その他</option>
+        </optgroup>
+      </select>
+    </div>
+  
     <div id="recommend-content">読み込み中...</div>
   </div>
 

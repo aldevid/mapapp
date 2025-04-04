@@ -227,7 +227,14 @@ def add_spot(request, map_id):
 
 @login_required
 def get_spots(request, map_id):
-    custom_map = get_object_or_404(CustomMap, id=map_id, user=request.user)
+    try:
+        custom_map = CustomMap.objects.get(id=map_id)
+    except CustomMap.DoesNotExist:
+        return JsonResponse({'error': 'マップが存在しません'}, status=404)
+
+    if custom_map.user != request.user and not custom_map.is_recommended:
+        return HttpResponseForbidden('このマップにはアクセスできません')
+
     spots = Spot.objects.filter(map=custom_map)
     spots_data = [
         {

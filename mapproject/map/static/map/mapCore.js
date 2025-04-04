@@ -1,6 +1,6 @@
 // mapCore.js
 const isDefaultMap = String(IS_DEFAULT_MAP) === "true";
-
+const loadedSpots = [];
 let map;
 let currentTempMarker = null;
 
@@ -20,7 +20,10 @@ export function loadSpots() {
   fetch(url)
     .then(response => response.json())
     .then(data => {
+      loadedSpots.length = 0;
       data.forEach(spot => {
+        loadedSpots.push(spot);
+
         const marker = L.marker([spot.lat, spot.lng], {
           icon: getColoredIcon(spot.icon || 'default')
         }).addTo(map);
@@ -305,3 +308,28 @@ function getPinColor(icon) {
   };
   return pinColors[icon] || pinColors.default;
 }
+// heatmap setting
+let heatLayer = null;
+let heatVisible = false;
+
+document.getElementById("heatmap-toggle")?.addEventListener("click", () => {
+  heatVisible = !heatVisible;
+
+  if (heatLayer) {
+    map.removeLayer(heatLayer);
+    heatLayer = null;
+  }
+
+  if (heatVisible) {
+    const heatPoints = loadedSpots.map(s => [s.lat, s.lng, 0.5]); // 0.5は強度
+    heatLayer = L.heatLayer(heatPoints, { 
+      radius: 25,
+      blur: 25,
+      gradient: {
+        0.0: '#3B4CC0',
+        0.5: '#ffffff',
+        1.0: '#B40426'
+       }
+    }).addTo(map);
+  }
+});
