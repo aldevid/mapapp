@@ -147,7 +147,7 @@ def update_map_settings(request, map_id):
 
         return JsonResponse({'status': 'ok'})
 
-from django.db.models import Q
+
 
 @csrf_exempt
 @login_required
@@ -157,17 +157,16 @@ def add_spot_default(request):
         map_id = data.get("map_id", "")
 
         if map_id:
-            # 任意のマップが指定された場合
             map_obj = get_object_or_404(CustomMap, id=map_id, user=request.user)
         else:
-            # ✅ 既にある「デフォルト保存スポット」を使い回す（なければ作成）
-            map_obj, _ = CustomMap.objects.get_or_create(
-                user=request.user,
-                name="デフォルト保存スポット",
-                defaults={
-                    "id": "default-" + ''.join(random.choices(string.ascii_lowercase + string.digits, k=8)),
-                }
-            )
+            # 複数あっても最初の1つを使うようにする
+            map_obj = CustomMap.objects.filter(user=request.user, name="デフォルト保存スポット").first()
+            if not map_obj:
+                map_obj = CustomMap.objects.create(
+                    user=request.user,
+                    name="デフォルト保存スポット",
+                    id="default-" + ''.join(random.choices(string.ascii_lowercase + string.digits, k=8)),
+                )
 
         spot = Spot.objects.create(
             map=map_obj,
@@ -181,6 +180,7 @@ def add_spot_default(request):
             icon=data.get('icon', 'default'),
         )
         return JsonResponse({'status': 'okay', 'id': spot.id})
+
 
 
 @csrf_exempt

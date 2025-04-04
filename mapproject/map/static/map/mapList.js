@@ -75,22 +75,26 @@ export function setupMapListUI() {
       });
   });
 
-  // おすすめマップ一覧のトグル
   document.getElementById('recommend-toggle')?.addEventListener('click', () => {
     const list = document.getElementById('recommend-list');
     const toggle = document.getElementById('recommend-toggle');
+    const settings = document.getElementById('map-settings');
   
-    if (list.style.display === 'none' || list.style.display === '') {
-      // 一旦表示してサイズ取得
+    const isVisible = window.getComputedStyle(list).display !== 'none';
+
+  
+    if (!isVisible) {
+      const rect = toggle.getBoundingClientRect();
       list.style.display = 'block';
-      list.style.position = 'fixed';
+      toggle.textContent = 'おすすめマップ';
   
-      const toggleRect = toggle.getBoundingClientRect();
-      list.style.width = `${toggle.offsetWidth}px`;
-      list.style.left = `${toggleRect.left}px`;  // ← scrollX不要、fixedならviewport基準
-      list.style.top = `${toggleRect.bottom + 5}px`; // 少し下にオフセット
+      // 👇マップ設定が開いてたら閉じる
+      if (settings.style.display === 'block') {
+        settings.style.display = 'none';
+        document.getElementById('settings-toggle').textContent = '👍';
+      }
   
-      // データ取得して中身入れる
+      // データ読み込み
       fetch('/map/recommendations/json/')
         .then(res => res.json())
         .then(data => {
@@ -102,29 +106,42 @@ export function setupMapListUI() {
             </div>
           `).join('');
           document.getElementById('recommend-content').innerHTML = html || '<p>おすすめマップはまだありません。</p>';
-          toggle.textContent = 'おすすめマップ ▴';
         });
   
     } else {
       list.style.display = 'none';
-      document.getElementById('recommend-toggle').textContent = 'おすすめマップ ▾';
+      toggle.textContent = 'おすすめマップ';
     }
   });
-  
 
   // ⚙️ マップ設定の開閉
   document.getElementById('settings-toggle')?.addEventListener('click', () => {
-    console.log("Settings toggle clicked");
     const settings = document.getElementById('map-settings');
+    const recommend = document.getElementById('recommend-list');
     const toggle = document.getElementById('settings-toggle');
-
-    const icon ='👍';
-    if (settings.style.display === 'none' || settings.style.display === '') {
-      settings.style.display = 'block';
-      toggle.textContent = `${icon}`;
-    } else {
-      settings.style.display = 'none';
-      toggle.textContent = `${icon}`;
+  
+    const isVisible = settings.style.display === 'block';
+    settings.style.display = isVisible ? 'none' : 'block';
+    toggle.textContent = isVisible ? '👍' : '👍';
+  
+    // おすすめマップ一覧が開いてたら閉じる
+    if (!isVisible && recommend.style.display === 'block') {
+      recommend.style.display = 'none';
+      document.getElementById('recommend-toggle').textContent = 'おすすめマップ';
     }
   });
+
+    // サイドバーの開閉（×ボタン）
+    const sidebar = document.getElementById("sidebar");
+    const closeBtn = document.getElementById("close-sidebar-btn");
+  
+    closeBtn?.addEventListener("click", () => {
+      sidebar.classList.add("hidden");
+    });
+  
+    // グローバルに公開：ピンから呼び出すため
+    window.openSidebar = () => {
+      sidebar.classList.remove("hidden");
+    };
+  
 }
