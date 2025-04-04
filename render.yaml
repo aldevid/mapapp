@@ -3,7 +3,7 @@ services:
     name: recomap
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn mapproject.wsgi:application --log-level debug
+    startCommand: gunicorn mapproject.mapproject.wsgi:application --log-level debug
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
