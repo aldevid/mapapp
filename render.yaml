@@ -3,7 +3,7 @@ services:
     name: recomap
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn mapproject.wsgi:application
+    startCommand: gunicorn mapproject.wsgi:application --log-level debug
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
@@ -13,5 +13,7 @@ services:
         fromDatabase:
           name: recomap-db
           property: connectionString
+      - key: PYTHONPATH
+        value: /opt/render/project/src
     autoDeploy: true
     branch: develop
