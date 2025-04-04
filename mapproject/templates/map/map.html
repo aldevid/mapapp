@@ -32,13 +32,13 @@
     
       <!-- ✅ メッセージ表示ここに追加 -->
       {% if messages %}
-        <ul class="message-list" style="margin-bottom: 10px;">
-          {% for message in messages %}
-            <li style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %};">
-              {{ message }}
-            </li>
-          {% endfor %}
-        </ul>
+      <ul class="message-list" id="user-message-list" style="margin-bottom: 10px;">
+        {% for message in messages %}
+          <li style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %};">
+            {{ message }}
+          </li>
+        {% endfor %}
+      </ul>
       {% endif %}
     
       <!-- フォーム本体 -->
