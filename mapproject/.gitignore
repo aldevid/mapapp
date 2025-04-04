@@ -13,3 +13,4 @@ db.sqlite3
 
 # ローカル用に生成するツリー構成ファイル
 project_tree.txt
+media/

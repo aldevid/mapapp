@@ -25,7 +25,7 @@ def change_user_info(request):
 @login_required
 def change_profile_image(request):
     if request.method == 'POST':
-        profile = request.user.userprofile
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
         form = ProfileImageForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
