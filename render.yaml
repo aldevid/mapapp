@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: recomap
+    env: python
+    buildCommand: pip install -r mapproject/requirements.txt
+    startCommand: gunicorn mapproject.mapproject.wsgi:application
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_ALLOWED_HOSTS
+        value: recomap.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: recomap-db
+          property: connectionString
+    autoDeploy: true
+    branch: develop
+
