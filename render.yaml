@@ -13,5 +13,7 @@ services:
         fromDatabase:
           name: recomap-db
           property: connectionString
+      - key: PYTHONPATH
+        value: /opt/render/project/src
     autoDeploy: true
     branch: develop
