@@ -185,6 +185,7 @@ html, body {
 
 /* メニュー本体 */
 #user-menu {
+  position: relative; /* ← これが必要！ */
   background: white;
   padding: 20px;
   border-radius: 10px;
@@ -195,6 +196,18 @@ html, body {
 
 #user-menu h3 {
   margin-top: 0;
+}
+
+/* ポップアップ内の × ボタン */
+.close-user-menu {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 100002;
 }
 
 .logout-link {
