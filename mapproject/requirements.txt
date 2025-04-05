@@ -1,6 +1,8 @@
 asgiref==3.8.1
+cloudinary==1.43.0
 dj-database-url==2.3.0
 Django==5.1.7
+django-cloudinary-storage==0.3.0
 gunicorn==23.0.0
 packaging==24.2
 pillow==11.1.0
