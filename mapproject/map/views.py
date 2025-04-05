@@ -12,12 +12,12 @@ import xml.etree.ElementTree as ET
 from django.db.models import Q
 from django.http import JsonResponse
 from .models import CustomMap, Spot
-from django.http import HttpResponse
-from django.core.management import call_command
+#from django.http import HttpResponse
+#from django.core.management import call_command
 
-def run_migrations(request):
-    call_command("migrate")
-    return HttpResponse("Migrations executed.")
+#def run_migrations(request):
+#    call_command("migrate")
+#    return HttpResponse("Migrations executed.")
 
 #indexはもう不必要
 # @login_required
