@@ -27,8 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === overlay) {
         console.log("💨 overlay clicked, hiding...");
         overlay.classList.add('hidden');
+    
+        // ✅ 背景クリック時もメッセージ削除
+        const messageList = document.getElementById('user-message-list');
+        if (messageList) {
+          messageList.remove();
+        }
       }
-    });
+    });    
   } else {
     console.warn("❌ userIcon or overlay not found");
   }
@@ -38,7 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
     closeUserMenuBtn.addEventListener('click', () => {
       console.log("❌ close button clicked");
       overlay.classList.add('hidden');
+  
+      // ✅ ポップを閉じたらメッセージを消す！
+      const messageList = document.getElementById('user-message-list');
+      if (messageList) {
+        messageList.remove();  // または messageList.innerHTML = "";
+      }
     });
-  }
+  }  
 
 });

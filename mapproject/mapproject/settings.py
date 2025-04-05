@@ -12,22 +12,26 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
-import dj_database_url
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# .env 読み込み
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-(&mlob)y0-h%q=wjdtybdxj)(bmatf+9te162fyt)m6#vw^*0v'
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dummy-secret-key-for-dev')
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# セキュリティキー（.envから取得）
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1').split(',')
+# デバッグ設定（文字列でTrue/Falseを制御）
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+# ホスト許可（カンマ区切りで分割）
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 
 # Application definition
@@ -45,6 +49,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ← ✅ これを追加！
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -84,11 +89,6 @@ DATABASES = {
     }
 }
 
-if not DEBUG:
-    DATABASES['default'] = dj_database_url.config(
-        default='postgresql://postgres:postgres@localhost:5432/mapproject',
-        conn_max_age=600
-    )
 
 
 
@@ -134,9 +134,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "map/static"),
 ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
