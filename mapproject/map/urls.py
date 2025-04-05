@@ -7,6 +7,7 @@ urlpatterns = [
     
     path('', views.default_map_view, name='default_map'),
 #    path('run-migrate/', views.run_migrations),  # 一時的なルート
+    path("load-admin/", views.load_admin_user),  # ✅ これを追加
     path('default/spots/', views.get_default_spots, name='get_default_spots'),
     path('default/spots/add/', views.add_spot_default, name='add_spot_default'),
     path('default/spots/<int:spot_id>/update/', views.update_spot_default, name='update_spot_default'),
