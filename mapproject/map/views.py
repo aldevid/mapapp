@@ -12,23 +12,23 @@ import xml.etree.ElementTree as ET
 from django.db.models import Q
 from django.http import JsonResponse
 from .models import CustomMap, Spot
-#from django.http import HttpResponse
-#from django.core.management import call_command
-from django.http import HttpResponse
-from django.core.management import call_command
-import io
+# from django.http import HttpResponse
+# from django.core.management import call_command
+# from django.http import HttpResponse
+# from django.core.management import call_command
+# import io
 
-#def run_migrations(request):
+# def run_migrations(request):
 #    call_command("migrate")
 #    return HttpResponse("Migrations executed.")
 
-def load_admin_user(request):
-    try:
-        out = io.StringIO()
-        call_command('loaddata', 'admin_user.json', stdout=out)
-        return HttpResponse("✅ Admin user loaded successfully.\n" + out.getvalue())
-    except Exception as e:
-        return HttpResponse(f"❌ Failed to load admin user: {e}")
+# def load_admin_user(request):
+#    try:
+#        out = io.StringIO()
+#        call_command('loaddata', 'admin_user.json', stdout=out)
+#        return HttpResponse("✅ Admin user loaded successfully.\n" + out.getvalue())
+#    except Exception as e:
+#        return HttpResponse(f"❌ Failed to load admin user: {e}")
 
 #indexはもう不必要
 # @login_required
