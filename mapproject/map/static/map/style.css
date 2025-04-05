@@ -40,7 +40,7 @@ html, body {
   top: 0px;
   left: 0;
   width: 270px;
-  height: 80vh;
+  height: 70vh;
   background-color: rgba(255, 255, 255, 0.95); /* slightly transparent white */
   display: flex;
   flex-direction: column;
@@ -115,25 +115,32 @@ html, body {
   padding: 10px 16px;
   border-radius: 8px;
   text-align: center;
-  background-color: #3089efd9;  /* 赤ベース */
-  color: white;
-  border: 1px solid #287bd4cb;
-  box-shadow: inset 1px 1px 1px rgba(255,255,255,0.3);
+
+  /* ✅ 背景を白に */
+  background-color: #ffffff;
+
+  /* ✅ 文字を黒に */
+  color: #333;
+
+  /* ✅ 枠線はちょっとグレーにすると見やすい */
+  border: 1px solid #aaa;
+
+  /* ✅ シャドウも少し控えめに */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   transition: all 0.2s ease;
   margin-bottom: 0;
   position: relative; 
   z-index: 1001;
 }
-
 #my-map-toggle:hover {
-  background-color: #288dd6;
+  background-color: #f0f0f0;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   transform: translateY(-1px);
 }
 
 #my-map-toggle:active {
   transform: scale(0.96);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 

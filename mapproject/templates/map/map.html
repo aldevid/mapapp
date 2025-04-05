@@ -150,13 +150,58 @@
         </p>
         <p><strong>ジャンル</strong><span id="disp-genre"></span>
           <select id="spot-genre" class="edit-field" style="display:none;">
-            <option value="">選択してください</option>
-            <option value="カフェ">カフェ</option>
-            <option value="レストラン">レストラン</option>
-            <option value="観光">観光</option>
-            <option value="ショッピング">ショッピング</option>
-            <option value="ホテル">ホテル</option>
-            <option value="その他">その他</option>
+              <option value="">指定しない</option>
+              <optgroup label="グルメ 🍽️">
+                <option value="レストラン">レストラン</option>
+                <option value="ラーメン">ラーメン</option>
+                <option value="居酒屋">居酒屋</option>
+                <option value="バー">バー</option>
+                <option value="カフェ">カフェ</option>
+                <option value="スイーツ">スイーツ</option>
+              </optgroup>
+            
+              <optgroup label="観光・文化 🏯">
+                <option value="観光">観光</option>
+                <option value="自然">自然</option>
+                <option value="歴史スポット">歴史スポット</option>
+                <option value="神社・寺">神社・寺</option>
+                <option value="博物館・美術館">博物館・美術館</option>
+              </optgroup>
+            
+              <optgroup label="レジャー・遊び 🎡">
+                <option value="アクティビティ">アクティビティ</option>
+                <option value="テーマパーク">テーマパーク</option>
+                <option value="動物園・水族館">動物園・水族館</option>
+                <option value="カラオケ">カラオケ</option>
+                <option value="ライブ・イベント">ライブ・イベント</option>
+                <option value="映画館・劇場">映画館・劇場</option>
+              </optgroup>
+            
+              <optgroup label="ショッピング 🛍️">
+                <option value="ショッピング">ショッピング</option>
+                <option value="雑貨">雑貨</option>
+                <option value="ファッション">ファッション</option>
+                <option value="商業施設">商業施設</option>
+                <option value="アウトレット">アウトレット</option>
+              </optgroup>
+            
+              <optgroup label="宿泊・癒し ♨️">
+                <option value="ホテル">ホテル</option>
+                <option value="温泉・スパ">温泉・スパ</option>
+              </optgroup>
+            
+              <optgroup label="アウトドア ⛰️">
+                <option value="ハイキング・登山">ハイキング・登山</option>
+                <option value="展望台・夜景">展望台・夜景</option>
+                <option value="写真スポット">写真スポット</option>
+              </optgroup>
+            
+              <optgroup label="その他 🚉">
+                <option value="デートスポット">デートスポット</option>
+                <option value="スポーツ施設">スポーツ施設</option>
+                <option value="駅・交通">駅・交通</option>
+                <option value="その他">その他</option>
+              </optgroup>
           </select>
         </p>
         <p><strong>URL</strong> <a id="disp-url" href="#" target="_blank"></a><input type="url" id="spot-url" class="edit-field" style="display:none;"></p>
@@ -183,7 +228,7 @@
         
           <!-- 新規ピンのときにマップを選択するセレクトボックス -->
           <p id="map-select-wrapper" style="display: none;">
-            <label>追加先のマイマップ</label>
+            <label><strong>追加先のマイマップ</strong></label>
             <select id="select-map-id" style="width: 100%; margin-bottom: 10px;">
               <option value="">ホーム</option>
               {% for m in other_maps %}
