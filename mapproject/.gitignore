@@ -9,7 +9,7 @@ __pycache__/
 db.sqlite3/
 
 # .gitignore に以下を追記（もしくは確認）
-db.sqlite3
+# db.sqlite3
 
 # ローカル用に生成するツリー構成ファイル
 project_tree.txt

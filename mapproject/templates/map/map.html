@@ -116,7 +116,7 @@
       <a href="{% url 'map:map_view' m.id %}" class="map-card">{{ m.name }}</a>
       {% endif %}
       {% empty %}
-      <p>他にマップはありません</p>
+      <p>作成したマップはありません</p>
       {% endfor %}
     </div>
   </div>
@@ -128,12 +128,18 @@
     <button id="close-sidebar-btn">×</button>
 
     <div id="mymap-name">
-     {% if is_recommend_view %}
-       おすすめマップ「{{ display_map_name }}」
-     {% else %}
-       {{ username }}のマップ「{{ display_map_name }}」
-     {% endif %}
+      <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <img src="{% static 'images/recomap_logo_white.png' %}" alt="icon" style="width: 40px; height: 30px;">
+        <span>
+          {% if is_recommend_view %}
+            おすすめマップ「{{ display_map_name }}」
+          {% else %}
+            {{ username }}のマップ「{{ display_map_name }}」
+          {% endif %}
+        </span>
+      </div>
     </div>
+    
 
 
 

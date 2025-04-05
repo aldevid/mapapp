@@ -26,4 +26,9 @@ urlpatterns = [
     path('recommendations/', views.recommended_maps_view, name='recommended_maps'),
     path('recommendations/json/', views.recommended_maps_json, name='recommended_maps_json'),
 
+    # urls.py
+    path("<str:map_id>/like/", views.toggle_like_map, name="like_map"),
+    path("<str:map_id>/favorite/", views.toggle_favorite_map, name="favorite_map"),
+    path("mapinfo/", views.get_liked_favorite_info, name="mapinfo"),
+
 ]

@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 import xml.etree.ElementTree as ET
 from django.db.models import Q
 from django.http import JsonResponse
-from .models import CustomMap, Spot
+from .models import CustomMap, Spot, Favorite, Like
 
 #indexはもう不必要
 # @login_required
@@ -101,15 +101,23 @@ def recommended_maps_view(request):
         'maps': maps,
         'query': query
     })
-
+@login_required
 def recommended_maps_json(request):
     maps = CustomMap.objects.filter(is_recommended=True, is_public=True)
+    user = request.user
+    favorites = Favorite.objects.filter(user=user)
+    liked_map_ids = Like.objects.filter(user=user).values_list('custom_map_id', flat=True)
+    favorite_map_ids = favorites.values_list('custom_map_id', flat=True)
+
     data = [
         {
             'id': m.id,
             'name': m.name,
             'genre': m.genre,
             'user': m.user.username,
+            'likes' : m.likes.count(),
+            'is_favorite': m.id in favorite_map_ids,
+            'is_liked': m.id in liked_map_ids,
         }
         for m in maps
     ]
@@ -347,3 +355,39 @@ def kml_upload_view(request):
     return redirect(reverse("map:default_map"))
 
 
+
+
+# ----------------------------------------------------------------------------
+# favorite button
+
+@csrf_exempt
+@login_required
+def toggle_favorite_map(request, map_id):
+    map_obj = get_object_or_404(CustomMap, id=map_id, is_public=True)
+    fav, created = Favorite.objects.get_or_create(user=request.user, custom_map=map_obj)
+    if not created:
+        fav.delete()
+        return JsonResponse({'status': 'removed'})
+    return JsonResponse({'status': 'added'})
+
+@csrf_exempt
+@login_required
+def toggle_like_map(request, map_id):
+    map_obj = get_object_or_404(CustomMap, id=map_id, is_public=True)
+    like, created = Like.objects.get_or_create(user=request.user, custom_map=map_obj)
+    if not created:
+        like.delete()
+        count = Like.objects.filter(custom_map=map_obj).count()
+        return JsonResponse({'status': 'removed', 'count': count})
+    count = Like.objects.filter(custom_map=map_obj).count()
+    return JsonResponse({'status': 'liked', 'count': count})
+
+
+@login_required
+def get_liked_favorite_info(request):
+    favorites = Favorite.objects.filter(user=request.user).values_list('custom_map_id', flat=True)
+    likes = Like.objects.values('custom_map').annotate(count=models.Count('id'))
+    return JsonResponse({
+        'favorites': list(favorites),
+        'likes': {l['custom_map']: l['count'] for l in likes}
+    })
