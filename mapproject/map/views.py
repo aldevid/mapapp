@@ -209,6 +209,9 @@ def add_spot(request, map_id):
     if request.method == 'POST':
         data = json.loads(request.body)
         map_obj = CustomMap.objects.get(id=map_id)
+        if map_obj.user != request.user:
+            return HttpResponseForbidden("他人のマップには追加できません")
+        
         spot = Spot.objects.create(
             map=map_obj,
             name=data.get('name', ''),
@@ -257,7 +260,9 @@ def get_spots(request, map_id):
 @require_http_methods(["PUT"])
 def update_spot(request, map_id, spot_id):
     data = json.loads(request.body)
-    spot = Spot.objects.get(id=spot_id, map__id=map_id)
+    spot = get_object_or_404(Spot, id=spot_id, map__id=map_id)
+    if spot.map.user != request.user:
+        return HttpResponseForbidden("他人のマップは編集できません")
     spot.name = data.get('name', spot.name)
     spot.memo = data.get('memo', spot.memo)
     spot.genre = data.get('genre', spot.genre)
@@ -272,6 +277,8 @@ def update_spot(request, map_id, spot_id):
 def delete_spot(request, map_id, spot_id):
     try:
         spot = Spot.objects.get(id=spot_id, map__id=map_id)
+        if spot.map.user != request.user:
+            return HttpResponseForbidden("他人のマップは削除できません")
         spot.delete()
         return JsonResponse({'status': 'deleted'})
     except Spot.DoesNotExist:

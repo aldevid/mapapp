@@ -11,9 +11,37 @@ export function initMap() {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
 
-  map.on('click', handleMapClick);
+  // 自分のマップ or ホームマップのときだけ、クリックでピン追加を許可
+  if (IS_OWNER || isDefaultMap) {
+    map.on('click', handleMapClick);
+  }
 }
 
+
+// --- load spot modify ------------------------------------------------------------------------------
+
+// export function loadSpots() {
+//   const url = MAP_ID ? `/map/${MAP_ID}/spots/` : `/map/default/spots/`;
+
+//   fetch(url)
+//     .then(response => response.json())
+//     .then(data => {
+//       loadedSpots.length = 0;
+//       data.forEach(spot => {
+//         loadedSpots.push(spot);
+
+//         const marker = L.marker([spot.lat, spot.lng], {
+//           icon: getColoredIcon(spot.icon || 'default')
+//         }).addTo(map);
+
+//         marker.spotData = spot;
+//         marker.on('click', function () {
+//           closeMapListIfOpen();
+//           openSidebarWithSpot(this.spotData);
+//         });
+//       });
+//     });
+// }
 export function loadSpots() {
   const url = MAP_ID ? `/map/${MAP_ID}/spots/` : `/map/default/spots/`;
 
@@ -21,6 +49,7 @@ export function loadSpots() {
     .then(response => response.json())
     .then(data => {
       loadedSpots.length = 0;
+
       data.forEach(spot => {
         loadedSpots.push(spot);
 
@@ -29,13 +58,18 @@ export function loadSpots() {
         }).addTo(map);
 
         marker.spotData = spot;
-        marker.on('click', function () {
+
+        // ✅ 毎回最新のスポットを渡すように
+        marker.on('click', () => {
           closeMapListIfOpen();
-          openSidebarWithSpot(this.spotData);
+          openSidebarWithSpot(marker.spotData);  // ← this → marker
         });
       });
     });
 }
+// -----------------------------------------------------------------------------------------------
+
+
 
 function handleMapClick(e) {
   const { lat, lng } = e.latlng;
@@ -79,17 +113,75 @@ function closeMapListIfOpen() {
   }
 }
 
+// -----------------------------------------------------------------------------------------
+// opensidebarspot modify
+
+// function openSidebarWithSpot(spot) {
+//   window.openSidebar();
+  
+//   const isNew = !spot.id || spot.id === "null";
+//   const sidebar = document.getElementById('sidebar-main');
+//   const sidebarWrapper = document.getElementById('sidebar');
+
+//   sidebarWrapper.classList.remove('hidden');
+
+//   sidebar.style.display = 'block';
+//   document.getElementById('sidebar')?.classList.add('visible');
+//   document.getElementById('spot-name').value = spot.name || '';
+//   document.getElementById('spot-memo').value = spot.memo || '';
+//   document.getElementById('spot-genre').value = spot.genre || '';
+//   document.getElementById('spot-url').value = spot.url || '';
+//   document.getElementById('spot-hours').value = spot.hours || '';
+//   document.getElementById('spot-icon').value = spot.icon || 'default';
+
+//   // sidebar.dataset.spotId = spot.id && spot.id !== 'null' ? String(spot.id) : '';
+//   sidebar.dataset.spotId = String(spot.id || '');
+
+
+//   // ✅ 表示切り替え（短い遅延でDOM描画を待つ）
+//   setTimeout(() => {
+//     const mapSelectWrapper = document.getElementById('map-select-wrapper');
+//     const isDefault = typeof IS_DEFAULT_MAP !== 'undefined' && IS_DEFAULT_MAP === true;
+//     if (isDefault && mapSelectWrapper) {
+//       mapSelectWrapper.style.display = 'block';
+//     } else if (mapSelectWrapper) {
+//       mapSelectWrapper.style.display = 'none';
+//     }
+//   }, 0);  // ← これでDOMが確実に存在してから処理される
+
+//   if (isNew) {
+//     enterEditMode();
+//   } else {
+//     showViewMode(spot);
+//   }
+
+//   if (!IS_OWNER && !isDefaultMap) {
+//     document.getElementById('edit-spot-btn')?.remove();
+//     document.getElementById('save-spot-btn')?.remove();
+//     document.getElementById('delete-spot-btn')?.remove();
+//   }
+  
+// }
+
 function openSidebarWithSpot(spot) {
   window.openSidebar();
-  
-  const isNew = !spot.id || spot.id === "null";
+
   const sidebar = document.getElementById('sidebar-main');
   const sidebarWrapper = document.getElementById('sidebar');
-
   sidebarWrapper.classList.remove('hidden');
-
   sidebar.style.display = 'block';
-  document.getElementById('sidebar')?.classList.add('visible');
+  sidebar.classList.add('visible');
+
+  // ✅ 一時マーカーが残ってたら消す（これが後のクリックの不具合原因だった）
+  if (currentTempMarker && !currentTempMarker.isSaved) {
+    map.removeLayer(currentTempMarker);
+    currentTempMarker = null;
+  }
+
+  // Spot IDを更新
+  sidebar.dataset.spotId = spot.id ? String(spot.id) : '';
+
+  // 各フォームに反映
   document.getElementById('spot-name').value = spot.name || '';
   document.getElementById('spot-memo').value = spot.memo || '';
   document.getElementById('spot-genre').value = spot.genre || '';
@@ -97,26 +189,36 @@ function openSidebarWithSpot(spot) {
   document.getElementById('spot-hours').value = spot.hours || '';
   document.getElementById('spot-icon').value = spot.icon || 'default';
 
-  sidebar.dataset.spotId = spot.id && spot.id !== 'null' ? String(spot.id) : '';
+  // 表示モードに切り替え
+  showViewMode(spot);
 
-  // ✅ 表示切り替え（短い遅延でDOM描画を待つ）
+  // デフォルトマップのときだけマップセレクトを表示
   setTimeout(() => {
     const mapSelectWrapper = document.getElementById('map-select-wrapper');
-    const isDefault = typeof IS_DEFAULT_MAP !== 'undefined' && IS_DEFAULT_MAP === true;
+    const isDefault = isDefaultMap;
+
     if (isDefault && mapSelectWrapper) {
       mapSelectWrapper.style.display = 'block';
     } else if (mapSelectWrapper) {
       mapSelectWrapper.style.display = 'none';
     }
-  }, 0);  // ← これでDOMが確実に存在してから処理される
+  }, 0);
 
-  if (isNew) {
-    enterEditMode();
+  // 編集・削除ボタンの制御（自分のマップ or デフォルトのみ可）
+  const editBtn = document.getElementById('edit-spot-btn');
+  const saveBtn = document.getElementById('save-spot-btn');
+  const deleteBtn = document.getElementById('delete-spot-btn');
+
+  if (!IS_OWNER && !isDefaultMap) {
+    editBtn?.classList.add('hidden');
+    saveBtn?.classList.add('hidden');
+    deleteBtn?.classList.add('hidden');
   } else {
-    showViewMode(spot);
+    editBtn?.classList.remove('hidden');
+    deleteBtn?.classList.remove('hidden');
   }
 }
-
+// -----------------------------------------------------------------------------------------
 
 
 
