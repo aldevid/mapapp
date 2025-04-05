@@ -16,7 +16,12 @@
     <link rel="icon" href="{% static 'images/favicon.png' %}">  <!-- ✅ 追加！ -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
-<body>
+
+<body style="background-color: #fbf8f1;">
+    <div style="text-align: center; margin-top: 40px;">
+        <img src="{% static 'images/recomap_logo.png' %}" alt="ロゴ" style="width: 120px;">
+      </div>      
+    
     <h1>ログイン</h1>
 
     {% if messages %}

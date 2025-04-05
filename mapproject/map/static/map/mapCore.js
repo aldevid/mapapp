@@ -1,6 +1,6 @@
 // mapCore.js
 const isDefaultMap = String(IS_DEFAULT_MAP) === "true";
-
+const loadedSpots = [];
 let map;
 let currentTempMarker = null;
 
@@ -11,8 +11,12 @@ export function initMap() {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
 
-  map.on('click', handleMapClick);
+  // 自分のマップ or ホームマップのときだけ、クリックでピン追加を許可
+  if (IS_OWNER || isDefaultMap) {
+    map.on('click', handleMapClick);
+  }
 }
+
 
 export function loadSpots() {
   const url = MAP_ID ? `/map/${MAP_ID}/spots/` : `/map/default/spots/`;
@@ -20,19 +24,28 @@ export function loadSpots() {
   fetch(url)
     .then(response => response.json())
     .then(data => {
+      loadedSpots.length = 0;
+
       data.forEach(spot => {
+        loadedSpots.push(spot);
+
         const marker = L.marker([spot.lat, spot.lng], {
           icon: getColoredIcon(spot.icon || 'default')
         }).addTo(map);
 
         marker.spotData = spot;
-        marker.on('click', function () {
+
+        // ✅ 毎回最新のスポットを渡すように
+        marker.on('click', () => {
           closeMapListIfOpen();
-          openSidebarWithSpot(this.spotData);
+          openSidebarWithSpot(marker.spotData);  // ← this → marker
         });
       });
     });
 }
+
+
+
 
 function handleMapClick(e) {
   const { lat, lng } = e.latlng;
@@ -78,15 +91,18 @@ function closeMapListIfOpen() {
 
 function openSidebarWithSpot(spot) {
   window.openSidebar();
-  
-  const isNew = !spot.id || spot.id === "null";
+
   const sidebar = document.getElementById('sidebar-main');
   const sidebarWrapper = document.getElementById('sidebar');
-
   sidebarWrapper.classList.remove('hidden');
-
   sidebar.style.display = 'block';
-  document.getElementById('sidebar')?.classList.add('visible');
+  sidebar.classList.add('visible');
+
+  // Spot IDを更新
+  sidebar.dataset.spotId = spot.id ? String(spot.id) : '';
+  sidebar.dataset.mapId = spot.map_id || '';
+
+  // 各フォームに反映
   document.getElementById('spot-name').value = spot.name || '';
   document.getElementById('spot-memo').value = spot.memo || '';
   document.getElementById('spot-genre').value = spot.genre || '';
@@ -94,23 +110,47 @@ function openSidebarWithSpot(spot) {
   document.getElementById('spot-hours').value = spot.hours || '';
   document.getElementById('spot-icon').value = spot.icon || 'default';
 
-  sidebar.dataset.spotId = spot.id && spot.id !== 'null' ? String(spot.id) : '';
-
-  // ✅ 表示切り替え（短い遅延でDOM描画を待つ）
-  setTimeout(() => {
-    const mapSelectWrapper = document.getElementById('map-select-wrapper');
-    const isDefault = typeof IS_DEFAULT_MAP !== 'undefined' && IS_DEFAULT_MAP === true;
-    if (isDefault && mapSelectWrapper) {
-      mapSelectWrapper.style.display = 'block';
-    } else if (mapSelectWrapper) {
-      mapSelectWrapper.style.display = 'none';
-    }
-  }, 0);  // ← これでDOMが確実に存在してから処理される
-
-  if (isNew) {
+  // 🔧 新規ピンかどうかでモード切り替え
+  if (!spot.id) {
     enterEditMode();
   } else {
     showViewMode(spot);
+  }
+
+  // デフォルトマップの場合の切り替え表示
+  setTimeout(() => {
+    const mapSelectWrapper = document.getElementById('map-select-wrapper');
+    const savedMapName = document.getElementById('saved-map-name');  // ← HTMLに追加するやつ（後述）
+    const mapNameText = document.getElementById('map-name-text');
+
+    if (isDefaultMap) {
+      if (!spot.id) {
+        // 新規ピン → セレクト表示、マップ名非表示
+        if (mapSelectWrapper) mapSelectWrapper.style.display = 'block';
+        if (savedMapName) savedMapName.style.display = 'none';
+      } else {
+        // 保存済みピン → セレクト非表示、マップ名表示
+        if (mapSelectWrapper) mapSelectWrapper.style.display = 'none';
+        if (savedMapName) {
+          savedMapName.style.display = 'block';
+          mapNameText.textContent = spot.map_name || 'ホーム'; // ← Djangoから受け取った値
+        }
+      }
+    }
+  }, 0);
+
+  // 編集・削除ボタンの制御
+  const editBtn = document.getElementById('edit-spot-btn');
+  const saveBtn = document.getElementById('save-spot-btn');
+  const deleteBtn = document.getElementById('delete-spot-btn');
+
+  if (!IS_OWNER && !isDefaultMap) {
+    editBtn?.classList.add('hidden');
+    saveBtn?.classList.add('hidden');
+    deleteBtn?.classList.add('hidden');
+  } else {
+    editBtn?.classList.remove('hidden');
+    deleteBtn?.classList.remove('hidden');
   }
 }
 
@@ -122,7 +162,28 @@ function enterEditMode() {
   document.querySelectorAll('#sidebar-main span, #sidebar-main a').forEach(el => el.style.display = 'none');
   document.getElementById('edit-spot-btn').style.display = 'none';
   document.getElementById('save-spot-btn').style.display = 'inline';
+
+  // 🔽 ここから追加
+  if (isDefaultMap) {
+    const mapSelectWrapper = document.getElementById('map-select-wrapper');
+    const savedMapName = document.getElementById('saved-map-name');
+
+    if (mapSelectWrapper) mapSelectWrapper.style.display = 'block';
+    if (savedMapName) savedMapName.style.display = 'none';
+
+    // 🔽 セレクトボックスに現在のマップIDを反映
+    const select = document.getElementById('select-map-id');
+    const sidebar = document.getElementById('sidebar-main');
+    const currentMapId = sidebar.dataset.mapId;
+
+    if (select && currentMapId) {
+      select.value = currentMapId;
+    }
+  }
+  // 🔼 ここまで追加
 }
+
+
 
 function showViewMode(spot) {
   const spotId = spot.id || document.getElementById('sidebar-main').dataset.spotId;
@@ -152,6 +213,14 @@ function showViewMode(spot) {
   document.getElementById('disp-hours').textContent = spot.hours;
   document.getElementById("disp-memo").innerHTML = spot.memo.replace(/\n/g, "<br>");
 
+  const savedMapName = document.getElementById('saved-map-name');
+  const mapNameText = document.getElementById('map-name-text');
+
+  if (isDefaultMap && savedMapName &&mapNameText) {
+    savedMapName.style.display = 'block';
+    mapNameText.textContent = spot.map_name || 'ホーム'; // ← Djangoから受け取った値
+  }
+
   map.eachLayer(layer => {
     if (layer instanceof L.Marker && layer.spotData && String(layer.spotData.id) === String(spotId)) {
       layer.spotData = { ...spot };
@@ -177,6 +246,10 @@ document.getElementById('save-spot-btn')?.addEventListener('click', () => {
   const mapIdForSave = isDefaultMap ? document.getElementById('select-map-id')?.value : MAP_ID;
 
   const payload = { name, genre, url, hours, memo, icon };
+
+  if (isDefaultMap) {
+    payload.map_id = mapIdForSave;
+  }
 
   if (!spotId || spotId === "null") {
     if (!latLng) return;
@@ -305,3 +378,28 @@ function getPinColor(icon) {
   };
   return pinColors[icon] || pinColors.default;
 }
+// heatmap setting
+let heatLayer = null;
+let heatVisible = false;
+
+document.getElementById("heatmap-toggle")?.addEventListener("click", () => {
+  heatVisible = !heatVisible;
+
+  if (heatLayer) {
+    map.removeLayer(heatLayer);
+    heatLayer = null;
+  }
+
+  if (heatVisible) {
+    const heatPoints = loadedSpots.map(s => [s.lat, s.lng, 0.5]); // 0.5は強度
+    heatLayer = L.heatLayer(heatPoints, { 
+      radius: 25,
+      blur: 25,
+      gradient: {
+        0.0: '#3B4CC0',
+        0.5: '#ffffff',
+        1.0: '#B40426'
+       }
+    }).addTo(map);
+  }
+});
