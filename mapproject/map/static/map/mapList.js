@@ -1,4 +1,8 @@
 export function setupMapListUI() {
+  const sidebar = document.getElementById("sidebar");
+  window.openSidebar = () => {
+    sidebar.classList.remove("hidden");
+  };
   // Myマップの開閉
   const toggle = document.getElementById('my-map-toggle');
   const list = document.getElementById('my-map-list');
@@ -74,67 +78,82 @@ export function setupMapListUI() {
         }
       });
   });
+  
+  
+  // おすすめマップ search function------------------------------------------------------------
+// ✅ 絞り込み関数を「先に定義」する（外に出す！）
+function filterRecommendMaps() {
+  const keyword = document.getElementById('map-search-input')?.value.toLowerCase() || '';
+  const genre = document.getElementById('genre-filter')?.value || '';
 
-  document.getElementById('recommend-toggle')?.addEventListener('click', () => {
-    const list = document.getElementById('recommend-list');
-    const toggle = document.getElementById('recommend-toggle');
-    const settings = document.getElementById('map-settings');
-  
-    const isVisible = window.getComputedStyle(list).display !== 'none';
+  const cards = document.querySelectorAll('.recommend-card');
 
-  
-    if (!isVisible) {
-      const rect = toggle.getBoundingClientRect();
-      list.style.display = 'block';
-      toggle.textContent = 'おすすめマップ';
-  
-      // 👇マップ設定が開いてたら閉じる
-      if (settings.style.display === 'block') {
-        settings.style.display = 'none';
-        document.getElementById('settings-toggle').textContent = '👍';
-      }
-  
-      // データ読み込み
-      fetch('/map/recommendations/json/')
-        .then(res => res.json())
-        .then(data => {
-          const html = data.maps.map(m => `
-            <div style="margin-bottom: 10px; padding: 6px; border-bottom: 1px solid #eee;">
-              <strong>${m.name}</strong><br>
-              <small>ジャンル: ${m.genre || 'なし'}</small><br>
-              <a href="/map/${m.id}/">▶ このマップを見る</a>
-            </div>
-          `).join('');
-          document.getElementById('recommend-content').innerHTML = html || '<p>おすすめマップはまだありません。</p>';
-        });
-  
-    } else {
-      list.style.display = 'none';
-      toggle.textContent = 'おすすめマップ';
-    }
+  cards.forEach(card => {
+    const name = card.dataset.name?.toLowerCase() || '';
+    const cardGenre = card.dataset.genre || '';
+
+    const matchName = name.includes(keyword);
+    const matchGenre = genre === "" || genre === cardGenre;
+
+    card.style.display = (matchName && matchGenre) ? "block" : "none";
   });
+}
 
-  function filterRecommendMaps() {
-    const keyword = document.getElementById('map-search-input').value.toLowerCase();
-    const genre = document.getElementById('genre-filter').value;
-  
-    const cards = document.querySelectorAll('.recommend-card');
-  
-    cards.forEach(card => {
-      const name = card.dataset.name.toLowerCase();
-      const cardGenre = card.dataset.genre;
-  
-      const matchName = name.includes(keyword);
-      const matchGenre = genre === "" || genre === cardGenre;
-  
-      card.style.display = (matchName && matchGenre) ? "block" : "none";
-    });
+// ✅ イベント登録（絞り込み機能）
+document.getElementById('map-search-input')?.addEventListener('input', filterRecommendMaps);
+document.getElementById('genre-filter')?.addEventListener('change', filterRecommendMaps);
+
+// ✅ おすすめマップトグルイベント
+document.getElementById('recommend-toggle')?.addEventListener('click', () => {
+  const list = document.getElementById('recommend-list');
+  const toggle = document.getElementById('recommend-toggle');
+  const settings = document.getElementById('map-settings');
+
+  const isVisible = window.getComputedStyle(list).display !== 'none';
+
+  if (!isVisible) {
+    list.style.display = 'block';
+    toggle.textContent = 'おすすめマップ';
+
+    if (settings.style.display === 'block') {
+      settings.style.display = 'none';
+      document.getElementById('settings-toggle').textContent = '👍';
+    }
+
+    // ✅ データ読み込みとDOM生成
+    fetch('/map/recommendations/json/')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('recommend-content');
+        if (!container) return;
+
+        if (!data.maps.length) {
+          container.innerHTML = '<p>おすすめマップはまだありません。</p>';
+          return;
+        }
+
+        const html = data.maps.map(m => `
+          <div class="recommend-card" data-name="${m.name}" data-genre="${m.genre}" style="margin-bottom: 10px; padding: 6px; border-bottom: 1px solid #eee;">
+            <strong>${m.name}</strong><br>
+            <small>ジャンル: ${m.genre || 'なし'}</small><br>
+            <small>作成者: ${m.user}</small><br>
+            <a href="/map/${m.id}/">▶ このマップを見る</a>
+          </div>
+        `).join('');
+
+        container.innerHTML = html;
+
+        // ✅ 絞り込み反映
+        filterRecommendMaps();
+      });
+  } else {
+    list.style.display = 'none';
+    toggle.textContent = 'おすすめマップ';
   }
-  
-  document.getElementById('map-search-input').addEventListener('input', filterRecommendMaps);
-  document.getElementById('genre-filter').addEventListener('change', filterRecommendMaps);
+});
 
-  
+
+  // ----------------------------------------------------------------------------------------
   
   // ⚙️ マップ設定の開閉
   document.getElementById('settings-toggle')?.addEventListener('click', () => {
@@ -154,16 +173,13 @@ export function setupMapListUI() {
   });
 
     // サイドバーの開閉（×ボタン）
-    const sidebar = document.getElementById("sidebar");
     const closeBtn = document.getElementById("close-sidebar-btn");
   
     closeBtn?.addEventListener("click", () => {
       sidebar.classList.add("hidden");
     });
-  
+    
     // グローバルに公開：ピンから呼び出すため
-    window.openSidebar = () => {
-      sidebar.classList.remove("hidden");
-    };
+
   
 }

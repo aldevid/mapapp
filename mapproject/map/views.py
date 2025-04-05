@@ -34,15 +34,22 @@ def map_view(request, map_id):
     spots = Spot.objects.filter(map=custom_map)
     other_maps = CustomMap.objects.filter(user=request.user, is_system_default=False).exclude(id=map_id)
 
+    is_owner = custom_map.user == request.user
+    
     return render(request, 'map/map.html', {
         'custom_map': custom_map,
         'spots': spots,
         'map_id': map_id,
         'other_maps': other_maps,
-        'username': request.user.username, # <-この１行を追加
+
+        # 'username': request.user.username, # <-この１行を追加
+        'username': custom_map.user.username,  
+
         'email': request.user.email,  # ←★追加
         'display_map_name': custom_map.name,        # ← ここを追加
-        'is_owner': custom_map.user == request.user,
+        # 'is_owner': custom_map.user == request.user,
+        'is_owner': is_owner,
+        'is_recommend_view': not is_owner,
         'is_default': False,  
     })
 
@@ -60,26 +67,6 @@ def default_map_view(request):
         "is_default": True,     # デフォルトモードなので、true
     })
 
-@login_required
-def get_default_spots(request):
-    user_maps = CustomMap.objects.filter(user=request.user)
-    spots = Spot.objects.filter(map__in=user_maps)
-
-    spots_data = [
-        {
-            'id': s.id,
-            'name': s.name,
-            'lat': s.lat,
-            'lng': s.lng,
-            'memo': s.memo,
-            'genre': s.genre,
-            'url': s.url,
-            'hours': s.hours,
-            'icon': s.icon,
-        }
-        for s in spots
-    ]
-    return JsonResponse(spots_data, safe=False)
 
 
 @login_required
@@ -147,6 +134,28 @@ def update_map_settings(request, map_id):
 
         return JsonResponse({'status': 'ok'})
 
+@login_required
+def get_default_spots(request):
+    user_maps = CustomMap.objects.filter(user=request.user)
+    spots = Spot.objects.filter(map__in=user_maps)
+
+    spots_data = [
+        {
+            'id': s.id,
+            'name': s.name,
+            'lat': s.lat,
+            'lng': s.lng,
+            'memo': s.memo,
+            'genre': s.genre,
+            'url': s.url,
+            'hours': s.hours,
+            'icon': s.icon,
+            'map_id': s.map.id,
+            'map_name': s.map.name if s.map.name != "デフォルト保存スポット" else "ホーム",
+        }
+        for s in spots
+    ]
+    return JsonResponse(spots_data, safe=False)
 
 
 @csrf_exempt
@@ -179,7 +188,10 @@ def add_spot_default(request):
             hours=data.get('hours', ''),
             icon=data.get('icon', 'default'),
         )
-        return JsonResponse({'status': 'okay', 'id': spot.id})
+        return JsonResponse({
+            'status': 'okay',
+            'id': spot.id,
+            'map_name': spot.map.name if spot.map.name != "デフォルト保存スポット" else "ホーム",})
 
 
 
@@ -194,6 +206,12 @@ def update_spot_default(request, spot_id):
     spot.url = data.get('url', spot.url)
     spot.hours = data.get('hours', spot.hours)
     spot.icon = data.get('icon', spot.icon)
+
+    new_map_id = data.get('map_id')
+    if new_map_id:
+        new_map = get_object_or_404(CustomMap, id=new_map_id, user=request.user)
+        spot.map = new_map
+        
     spot.save()
     return JsonResponse({'status': 'updated'})
 
@@ -250,6 +268,8 @@ def get_spots(request, map_id):
             'url': s.url,
             'hours': s.hours,
             'icon': s.icon,
+            'map_id': s.map.id,
+            'map_name': s.map.name if s.map.name != "デフォルト保存スポット" else "ホーム",
         }
         for s in spots
     ]
