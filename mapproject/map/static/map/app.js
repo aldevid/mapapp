@@ -8,6 +8,70 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSpots();
   setupMapListUI();
 
+
+    // mymap delete function--------------------------------------------------------
+  let deleteMode = false;
+  
+  document.getElementById("delete-map-mode-toggle")?.addEventListener("click", () => {
+    deleteMode = !deleteMode;
+  
+    document.querySelectorAll(".delete-map-btn").forEach(btn => {
+      btn.style.display = deleteMode ? "inline-block" : "none";
+    });
+  
+    document.getElementById("delete-map-mode-toggle").textContent = 
+      deleteMode ? "削除モード終了" : "マップを削除";
+  });
+  
+  // 各削除ボタンに削除処理を追加
+  document.querySelectorAll(".delete-map-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const mapId = btn.closest(".map-card-wrapper").dataset.mapId;
+      if (confirm("本当にこのマップを削除しますか？")) {
+        fetch(`/map/${mapId}/delete/`, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": CSRF_TOKEN
+          }
+        })
+        .then(res => {
+          if (res.ok) {
+            btn.closest(".map-card-wrapper").remove();
+          } else {
+            alert("削除に失敗しました。");
+          }
+        });
+      }
+    });
+  });
+    // 🤍 お気に入り解除ボタン処理
+    document.querySelectorAll(".unfavorite-map-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const mapId = btn.dataset.mapId;
+        fetch(`/map/${mapId}/favorite/`, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": CSRF_TOKEN
+          }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "removed") {
+            btn.closest(".map-card-wrapper").remove();  // お気に入り解除したらUIからも削除
+
+            const recButton =document.querySelector(
+              `.recommend-card button.fav-button[data-id="${mapId}"]`
+            );
+            if (recButton) {
+              recButton.dataset.favirited = "false";
+              recButton.textContent = "🤍";
+            }
+          }
+        });
+      });
+    });
+
+
   const userIcon = document.getElementById('user-icon-button');
   const overlay = document.getElementById('user-menu-overlay');
 
@@ -54,3 +118,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }  
 
 });
+
+

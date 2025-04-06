@@ -184,10 +184,10 @@ export function setupMapListUI() {
             });
           });
           
-          // お気に入りボタン処理
           container.querySelectorAll('.fav-button').forEach(btn => {
             btn.addEventListener('click', () => {
               const mapId = btn.dataset.id;
+          
               fetch(`/map/${mapId}/favorite/`, {
                 method: 'POST',
                 headers: { 'X-CSRFToken': CSRF_TOKEN }
@@ -196,14 +196,61 @@ export function setupMapListUI() {
               .then(data => {
                 if (data.status === 'added') {
                   btn.dataset.favorited = 'true';
-                  btn.innerHTML = '❤️';
+                  btn.textContent = '❤️';
+          
+                  // ✅ 追加処理ここから
+                const mapCardWrapper = document.createElement('div');
+                mapCardWrapper.className = 'map-card-wrapper';
+                mapCardWrapper.dataset.mapId = mapId;                
+                // 🧩 headerラッパー追加（横並び）
+                const header = document.createElement('div');
+                header.className = 'map-card-header';                
+                const link = document.createElement('a');
+                link.href = `/map/${mapId}/`;
+                link.className = 'map-card';
+                link.textContent = btn.closest('.recommend-card').dataset.name;                
+                const unfavBtn = document.createElement('button');
+                unfavBtn.className = 'unfavorite-map-btn';
+                unfavBtn.dataset.mapId = mapId;
+                unfavBtn.textContent = '🤍';                
+                // お気に入り解除クリック処理
+                unfavBtn.addEventListener('click', () => {
+                  fetch(`/map/${mapId}/favorite/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': CSRF_TOKEN }
+                  })
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data.status === 'removed') {
+                      mapCardWrapper.remove();                
+                      // おすすめマップ側のハートも更新
+                      const recBtn = document.querySelector(`.recommend-card button.fav-button[data-id="${mapId}"]`);
+                      if (recBtn) {
+                        recBtn.dataset.favorited = "false";
+                        recBtn.textContent = "🤍";
+                      }
+                    }
+                  });
+                });                
+                header.appendChild(link);
+                header.appendChild(unfavBtn);
+                mapCardWrapper.appendChild(header);                
+                document.querySelector('#my-map-list').appendChild(mapCardWrapper);
+                // ✅ 追加処理ここまで                
+                  // ✅ 追加処理ここまで
                 } else if (data.status === 'removed') {
                   btn.dataset.favorited = 'false';
-                  btn.innerHTML = '🤍';
+                  btn.textContent = '🤍';
+
+                  const targetInMyMap = document.querySelector(`#my-map-list .map-card-wrapper[data-map-id="${mapId}"]`);
+                  if (targetInMyMap) {
+                    targetInMyMap.remove(); // Myマップ一覧からも削除
+                  }
                 }
               });
             });
-          });              
+          });
+                     
         });
     } else {
       list.style.display = 'none';

@@ -13,6 +13,7 @@ urlpatterns = [
 
     path('create/', views.create_map, name='create_map'),
     path('create/ajax/', views.create_map_ajax, name='create_map_ajax'),
+    path('<str:map_id>/delete/', views.delete_map, name='delete_map'),
 
     path("upload-kml/", views.kml_upload_view, name="upload_kml"),
 
