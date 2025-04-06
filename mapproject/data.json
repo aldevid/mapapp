@@ -1,0 +1,1717 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$NPaX5eq3GrBHQP60Y1Yoo7$0m86eZN265sLTkHvXRIIgVo6U7FYuCVRd6WbksqLWN8=",
+    "last_login": "2025-04-05T07:50:39.251Z",
+    "is_superuser": false,
+    "username": "sakuto",
+    "first_name": "",
+    "last_name": "",
+    "email": "saku_to.blue@muse.ocn.ne.jp",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-04-04T04:48:06.958Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$ToysW2kO1sEtT8yrOofve1$4YQmq3aKg8p1Ao+jOjb06fazTfX8rGKUAA1F7/np5WA=",
+    "last_login": "2025-04-04T11:13:35.630Z",
+    "is_superuser": false,
+    "username": "ファッション",
+    "first_name": "",
+    "last_name": "",
+    "email": "cmt12066@ict.ocn.ne.jp",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-04-04T10:43:24.578Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$b0JV0SxCd1i4oRvZdCAmf1$CEwExHBFsrNWhSfX8OjHHIZinVHBBfAU8ZeKzCfAnkE=",
+    "last_login": "2025-04-05T02:47:33.050Z",
+    "is_superuser": false,
+    "username": "fassion",
+    "first_name": "",
+    "last_name": "",
+    "email": "cmt12066@ict.ocn.ne.jp",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-04-04T11:26:23.357Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$WO6kOBtm9jYspmcvSau0dT$dbrXQcWQJuH8blNLqfvLzz1M1m0CIDWLp0M9M6F95bM=",
+    "last_login": "2025-04-05T07:52:29.104Z",
+    "is_superuser": true,
+    "username": "ovito",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-04-05T06:20:25.961Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "map.custommap",
+  "pk": "0tuil6zz",
+  "fields": {
+    "name": "服めぐり",
+    "user": 3,
+    "created_at": "2025-04-04T11:32:00.379Z",
+    "is_recommended": true,
+    "is_public": true,
+    "is_system_default": false,
+    "description": "",
+    "genre": "アウトレット"
+  }
+},
+{
+  "model": "map.custommap",
+  "pk": "4srv21kb",
+  "fields": {
+    "name": "googlemap",
+    "user": 1,
+    "created_at": "2025-04-04T11:24:03.723Z",
+    "is_recommended": true,
+    "is_public": true,
+    "is_system_default": false,
+    "description": "",
+    "genre": "アクティビティ"
+  }
+},
+{
+  "model": "map.custommap",
+  "pk": "cifc0wsr",
+  "fields": {
+    "name": "静岡",
+    "user": 1,
+    "created_at": "2025-04-04T10:40:51.823Z",
+    "is_recommended": true,
+    "is_public": true,
+    "is_system_default": false,
+    "description": "",
+    "genre": "カフェ"
+  }
+},
+{
+  "model": "map.custommap",
+  "pk": "default-rjubrh8h",
+  "fields": {
+    "name": "デフォルト保存スポット",
+    "user": 1,
+    "created_at": "2025-04-04T08:39:39.018Z",
+    "is_recommended": false,
+    "is_public": false,
+    "is_system_default": true,
+    "description": null,
+    "genre": null
+  }
+},
+{
+  "model": "map.custommap",
+  "pk": "default-wyj1p0rq",
+  "fields": {
+    "name": "デフォルト保存スポット",
+    "user": 1,
+    "created_at": "2025-04-04T04:48:50.344Z",
+    "is_recommended": false,
+    "is_public": false,
+    "is_system_default": false,
+    "description": null,
+    "genre": null
+  }
+},
+{
+  "model": "map.custommap",
+  "pk": "l5f4bp3l",
+  "fields": {
+    "name": "愛知県",
+    "user": 1,
+    "created_at": "2025-04-04T04:50:17.133Z",
+    "is_recommended": true,
+    "is_public": true,
+    "is_system_default": false,
+    "description": "ドライブ",
+    "genre": "ショッピング"
+  }
+},
+{
+  "model": "map.custommap",
+  "pk": "mpxj2er6",
+  "fields": {
+    "name": "服",
+    "user": 2,
+    "created_at": "2025-04-04T10:43:48.555Z",
+    "is_recommended": true,
+    "is_public": true,
+    "is_system_default": false,
+    "description": "服めぐりのマップ",
+    "genre": "ショッピング"
+  }
+},
+{
+  "model": "map.custommap",
+  "pk": "n3te1kp7",
+  "fields": {
+    "name": "大須商店街",
+    "user": 4,
+    "created_at": "2025-04-05T09:30:58.664Z",
+    "is_recommended": false,
+    "is_public": false,
+    "is_system_default": false,
+    "description": null,
+    "genre": null
+  }
+},
+{
+  "model": "map.custommap",
+  "pk": "o4y182q7",
+  "fields": {
+    "name": "岐阜県",
+    "user": 1,
+    "created_at": "2025-04-05T05:35:46.824Z",
+    "is_recommended": true,
+    "is_public": true,
+    "is_system_default": false,
+    "description": "",
+    "genre": "バー"
+  }
+},
+{
+  "model": "map.custommap",
+  "pk": "rd5fv9ci",
+  "fields": {
+    "name": "大阪",
+    "user": 1,
+    "created_at": "2025-04-04T10:40:06.262Z",
+    "is_recommended": true,
+    "is_public": true,
+    "is_system_default": false,
+    "description": "デートスポット",
+    "genre": "動物園・水族館"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 1,
+  "fields": {
+    "icon": "default",
+    "map": "default-wyj1p0rq",
+    "name": "",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.185032937998294,
+    "lng": 136.89823150634768,
+    "created_at": "2025-04-04T04:48:50.346Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 3,
+  "fields": {
+    "icon": "red",
+    "map": "l5f4bp3l",
+    "name": "千種",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.17352768264042,
+    "lng": 136.9589996337891,
+    "created_at": "2025-04-04T04:50:40.338Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 4,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "風来坊 吹上店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.159453,
+    "lng": 136.9283297,
+    "created_at": "2025-04-04T08:39:39.020Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 5,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "ラーメンエボシ 鶴舞店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1523983,
+    "lng": 136.9184929,
+    "created_at": "2025-04-04T08:39:39.022Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 6,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "尾形研",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1564753,
+    "lng": 136.924717,
+    "created_at": "2025-04-04T08:39:39.024Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 7,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "セカヤキ",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1494471,
+    "lng": 136.9365559,
+    "created_at": "2025-04-04T08:39:39.027Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 8,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "大阪",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.6778272,
+    "lng": 135.5109761,
+    "created_at": "2025-04-04T08:39:39.028Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 9,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "浜松",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.7094429,
+    "lng": 137.7137349,
+    "created_at": "2025-04-04T08:39:39.030Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 10,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "SF",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.8598312,
+    "lng": 136.8151566,
+    "created_at": "2025-04-04T08:39:39.031Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 11,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "大垣",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.3722416,
+    "lng": 136.6210068,
+    "created_at": "2025-04-04T08:39:39.032Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 12,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "風来坊 吹上店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.159453,
+    "lng": 136.9283297,
+    "created_at": "2025-04-04T09:31:43.923Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 13,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "ラーメンエボシ 鶴舞店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1523983,
+    "lng": 136.9184929,
+    "created_at": "2025-04-04T09:31:43.925Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 14,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "尾形研",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1564753,
+    "lng": 136.924717,
+    "created_at": "2025-04-04T09:31:43.926Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 15,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "セカヤキ",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1494471,
+    "lng": 136.9365559,
+    "created_at": "2025-04-04T09:31:43.928Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 16,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "大阪",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.6778272,
+    "lng": 135.5109761,
+    "created_at": "2025-04-04T09:31:43.929Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 17,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "浜松",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.7094429,
+    "lng": 137.7137349,
+    "created_at": "2025-04-04T09:31:43.930Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 18,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "SF",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.8598312,
+    "lng": 136.8151566,
+    "created_at": "2025-04-04T09:31:43.931Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 19,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "大垣",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.3722416,
+    "lng": 136.6210068,
+    "created_at": "2025-04-04T09:31:43.932Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 20,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "マクドナルド",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1493719,
+    "lng": 136.9389152,
+    "created_at": "2025-04-04T09:31:43.933Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 21,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "ポイント 10",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1432649,
+    "lng": 136.8882268,
+    "created_at": "2025-04-04T09:31:43.934Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 22,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "十夢",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1497394,
+    "lng": 136.9221757,
+    "created_at": "2025-04-04T09:31:43.935Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 23,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "油そば専門店 歌志軒 鶴舞店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1559405,
+    "lng": 136.9152853,
+    "created_at": "2025-04-04T09:31:43.935Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 24,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "煙力鶴舞駅前店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1557846,
+    "lng": 136.915683,
+    "created_at": "2025-04-04T09:31:43.936Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 25,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "鶏白湯らーめん 鶏神 鶴舞店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.155676,
+    "lng": 136.9157822,
+    "created_at": "2025-04-04T09:31:43.937Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 26,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "一刻屋",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1559751,
+    "lng": 136.9171793,
+    "created_at": "2025-04-04T09:31:43.938Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 27,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "麺家 幸先坂",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1567745,
+    "lng": 136.9175816,
+    "created_at": "2025-04-04T09:31:43.939Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 28,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "麺屋 桜",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1503554,
+    "lng": 136.933515,
+    "created_at": "2025-04-04T09:31:43.939Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 29,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "横浜家系ラーメン ええが家 千種駅前店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1695237,
+    "lng": 136.9322349,
+    "created_at": "2025-04-04T09:31:43.940Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 30,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "シヤチル",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.169536,
+    "lng": 136.933988,
+    "created_at": "2025-04-04T09:31:43.941Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 31,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "餃子のかっちゃん 今池店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1686197,
+    "lng": 136.9381859,
+    "created_at": "2025-04-04T09:31:43.941Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 32,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "サイゼリヤ 今池駅前店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.168752,
+    "lng": 136.93764,
+    "created_at": "2025-04-04T09:31:43.942Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 33,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "三代目鳥メロ 今池店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1684086,
+    "lng": 136.9365339,
+    "created_at": "2025-04-04T09:31:43.943Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 34,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "福蘭",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1683796,
+    "lng": 136.9357635,
+    "created_at": "2025-04-04T09:31:43.943Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 35,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "バーガーキング 今池店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1676078,
+    "lng": 136.9363054,
+    "created_at": "2025-04-04T09:31:43.944Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 36,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "秀寿し",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1679329,
+    "lng": 136.9357337,
+    "created_at": "2025-04-04T09:31:43.945Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 37,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "甚六",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1675306,
+    "lng": 136.9369421,
+    "created_at": "2025-04-04T09:31:43.945Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 38,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "中国料理 麒麟楼",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1652972,
+    "lng": 136.9365873,
+    "created_at": "2025-04-04T09:31:43.946Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 39,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "盛華 御器所店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.147209,
+    "lng": 136.9338497,
+    "created_at": "2025-04-04T09:31:43.946Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 40,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "自然やポチャ",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1553994,
+    "lng": 136.9175458,
+    "created_at": "2025-04-04T09:31:43.947Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 41,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "鶴舞公園 噴水塔",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.15554,
+    "lng": 136.9189628,
+    "created_at": "2025-04-04T09:31:43.948Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 42,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "みそ吟 鶴舞店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1556601,
+    "lng": 136.9168581,
+    "created_at": "2025-04-04T09:31:43.948Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 43,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "ムガルパレス 2号店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1600269,
+    "lng": 136.9201759,
+    "created_at": "2025-04-04T09:31:43.949Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 44,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "ゆきちゃんラーメン",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1599147,
+    "lng": 136.9208693,
+    "created_at": "2025-04-04T09:31:43.950Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 45,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "ドルチェ・ヴィータ",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1594108,
+    "lng": 136.9195677,
+    "created_at": "2025-04-04T09:31:43.950Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 46,
+  "fields": {
+    "icon": "blue",
+    "map": "rd5fv9ci",
+    "name": "大阪市",
+    "memo": "",
+    "genre": "観光",
+    "url": "",
+    "hours": "",
+    "lat": 34.69222697200049,
+    "lng": 135.49987792968753,
+    "created_at": "2025-04-04T10:40:24.028Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 47,
+  "fields": {
+    "icon": "default",
+    "map": "rd5fv9ci",
+    "name": "茨木市",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.81605826221895,
+    "lng": 135.56613922119143,
+    "created_at": "2025-04-04T10:40:34.264Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 48,
+  "fields": {
+    "icon": "default",
+    "map": "rd5fv9ci",
+    "name": "万博公園",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.808447575153814,
+    "lng": 135.53249359130862,
+    "created_at": "2025-04-04T10:40:42.706Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 49,
+  "fields": {
+    "icon": "default",
+    "map": "cifc0wsr",
+    "name": "中田島砂丘",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.66116954859759,
+    "lng": 137.73842811584475,
+    "created_at": "2025-04-04T10:41:10.392Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 50,
+  "fields": {
+    "icon": "default",
+    "map": "cifc0wsr",
+    "name": "浜松",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.71043249805487,
+    "lng": 137.72684097290042,
+    "created_at": "2025-04-04T10:41:17.200Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 51,
+  "fields": {
+    "icon": "default",
+    "map": "cifc0wsr",
+    "name": "基地",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.74838307098529,
+    "lng": 137.70177841186526,
+    "created_at": "2025-04-04T10:41:21.483Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 52,
+  "fields": {
+    "icon": "default",
+    "map": "cifc0wsr",
+    "name": "山",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.71452466170395,
+    "lng": 137.68890380859378,
+    "created_at": "2025-04-04T10:41:25.769Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 53,
+  "fields": {
+    "icon": "default",
+    "map": "mpxj2er6",
+    "name": "大須商店街",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.156600071591406,
+    "lng": 136.90524816513064,
+    "created_at": "2025-04-04T10:44:03.343Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 54,
+  "fields": {
+    "icon": "default",
+    "map": "mpxj2er6",
+    "name": "wynn",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.164678402169386,
+    "lng": 136.90534472465518,
+    "created_at": "2025-04-04T10:44:20.624Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 55,
+  "fields": {
+    "icon": "default",
+    "map": "mpxj2er6",
+    "name": "服",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.16590630833836,
+    "lng": 136.90705060958865,
+    "created_at": "2025-04-04T10:44:25.463Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 57,
+  "fields": {
+    "icon": "default",
+    "map": "mpxj2er6",
+    "name": "",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.17661461831242,
+    "lng": 136.90372467041018,
+    "created_at": "2025-04-04T10:46:37.527Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 59,
+  "fields": {
+    "icon": "default",
+    "map": "l5f4bp3l",
+    "name": "丸の内",
+    "memo": "名古屋に近いところ",
+    "genre": "",
+    "url": "https://github.com/aldevid",
+    "hours": "",
+    "lat": 35.178578970892055,
+    "lng": 136.89754486083987,
+    "created_at": "2025-04-04T10:59:00.026Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 63,
+  "fields": {
+    "icon": "default",
+    "map": "mpxj2er6",
+    "name": "ikea",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.171843850142885,
+    "lng": 137.08705902099612,
+    "created_at": "2025-04-04T11:05:07.331Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 64,
+  "fields": {
+    "icon": "default",
+    "map": "l5f4bp3l",
+    "name": "春日",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.234683272568745,
+    "lng": 136.8498229980469,
+    "created_at": "2025-04-04T11:09:09.085Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 65,
+  "fields": {
+    "icon": "default",
+    "map": "l5f4bp3l",
+    "name": "",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.23973075809775,
+    "lng": 136.8879318237305,
+    "created_at": "2025-04-04T11:09:11.972Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 66,
+  "fields": {
+    "icon": "default",
+    "map": "mpxj2er6",
+    "name": "",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.185032937998294,
+    "lng": 136.8827819824219,
+    "created_at": "2025-04-04T11:12:55.728Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 67,
+  "fields": {
+    "icon": "default",
+    "map": "mpxj2er6",
+    "name": "",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.20467229285751,
+    "lng": 136.8776321411133,
+    "created_at": "2025-04-04T11:12:58.904Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 68,
+  "fields": {
+    "icon": "default",
+    "map": "mpxj2er6",
+    "name": "",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.20467229285751,
+    "lng": 136.9157409667969,
+    "created_at": "2025-04-04T11:15:23.181Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 69,
+  "fields": {
+    "icon": "orange",
+    "map": "4srv21kb",
+    "name": "googlemap1",
+    "memo": "",
+    "genre": "レストラン",
+    "url": "",
+    "hours": "",
+    "lat": 35.17044062975638,
+    "lng": 136.8820953369141,
+    "created_at": "2025-04-04T11:25:04.659Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 70,
+  "fields": {
+    "icon": "orange",
+    "map": "4srv21kb",
+    "name": "googlemap2",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.167353459664824,
+    "lng": 136.90029144287112,
+    "created_at": "2025-04-04T11:25:13.099Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 71,
+  "fields": {
+    "icon": "orange",
+    "map": "4srv21kb",
+    "name": "googlemap3",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.179982050814914,
+    "lng": 136.89823150634768,
+    "created_at": "2025-04-04T11:25:20.657Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 72,
+  "fields": {
+    "icon": "default",
+    "map": "0tuil6zz",
+    "name": "",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.121312662907336,
+    "lng": 136.7842483520508,
+    "created_at": "2025-04-04T11:32:04.260Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 73,
+  "fields": {
+    "icon": "default",
+    "map": "0tuil6zz",
+    "name": "3",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.12833275942814,
+    "lng": 136.78802490234378,
+    "created_at": "2025-04-04T11:32:05.914Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 74,
+  "fields": {
+    "icon": "default",
+    "map": "0tuil6zz",
+    "name": "",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.12355915962479,
+    "lng": 136.79729461669925,
+    "created_at": "2025-04-04T11:32:07.320Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 75,
+  "fields": {
+    "icon": "default",
+    "map": "0tuil6zz",
+    "name": "",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.126928788529646,
+    "lng": 136.77463531494143,
+    "created_at": "2025-04-04T11:32:08.770Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 76,
+  "fields": {
+    "icon": "default",
+    "map": "0tuil6zz",
+    "name": "1",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.135352250856705,
+    "lng": 136.7952346801758,
+    "created_at": "2025-04-04T11:32:10.141Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 77,
+  "fields": {
+    "icon": "blue",
+    "map": "0tuil6zz",
+    "name": "2",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.13198297048988,
+    "lng": 136.78665161132815,
+    "created_at": "2025-04-04T11:32:11.517Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 78,
+  "fields": {
+    "icon": "default",
+    "map": "0tuil6zz",
+    "name": "",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.12018939131503,
+    "lng": 136.79248809814456,
+    "created_at": "2025-04-04T11:32:12.994Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 79,
+  "fields": {
+    "icon": "default",
+    "map": "0tuil6zz",
+    "name": "4",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.12524399150321,
+    "lng": 136.78287506103518,
+    "created_at": "2025-04-04T11:32:14.377Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 80,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "風来坊 吹上店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.159453,
+    "lng": 136.9283297,
+    "created_at": "2025-04-05T05:08:08.395Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 81,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "ラーメンエボシ 鶴舞店",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1523983,
+    "lng": 136.9184929,
+    "created_at": "2025-04-05T05:08:08.397Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 82,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "尾形研",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1564753,
+    "lng": 136.924717,
+    "created_at": "2025-04-05T05:08:08.398Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 83,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "セカヤキ",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.1494471,
+    "lng": 136.9365559,
+    "created_at": "2025-04-05T05:08:08.400Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 84,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "大阪",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.6778272,
+    "lng": 135.5109761,
+    "created_at": "2025-04-05T05:08:08.402Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 85,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "浜松",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.7094429,
+    "lng": 137.7137349,
+    "created_at": "2025-04-05T05:08:08.404Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 86,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "SF",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 34.8598312,
+    "lng": 136.8151566,
+    "created_at": "2025-04-05T05:08:08.405Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 87,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "大垣",
+    "memo": "(KMLから追加)",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.3722416,
+    "lng": 136.6210068,
+    "created_at": "2025-04-05T05:08:08.406Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 88,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "北区",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.213368204427695,
+    "lng": 136.92226409912112,
+    "created_at": "2025-04-05T05:46:39.786Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 89,
+  "fields": {
+    "icon": "default",
+    "map": "default-rjubrh8h",
+    "name": "守山区",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.231037671011904,
+    "lng": 136.9981384277344,
+    "created_at": "2025-04-05T05:47:06.114Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 90,
+  "fields": {
+    "icon": "green",
+    "map": "default-rjubrh8h",
+    "name": "ジブリパーク",
+    "memo": "ジブリパーク",
+    "genre": "観光",
+    "url": "",
+    "hours": "",
+    "lat": 35.174439744015935,
+    "lng": 137.08688735961917,
+    "created_at": "2025-04-05T05:54:55.677Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 91,
+  "fields": {
+    "icon": "blue",
+    "map": "l5f4bp3l",
+    "name": "ネオポリス",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.295932897753254,
+    "lng": 137.02843666076663,
+    "created_at": "2025-04-05T05:56:00.762Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 93,
+  "fields": {
+    "icon": "default",
+    "map": "o4y182q7",
+    "name": "みっぱら",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.398565662890405,
+    "lng": 136.85256958007815,
+    "created_at": "2025-04-05T06:47:23.613Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 94,
+  "fields": {
+    "icon": "red",
+    "map": "o4y182q7",
+    "name": "海津",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.2192584540701,
+    "lng": 136.6355895996094,
+    "created_at": "2025-04-05T07:51:03.699Z"
+  }
+},
+{
+  "model": "map.spot",
+  "pk": 95,
+  "fields": {
+    "icon": "default",
+    "map": "n3te1kp7",
+    "name": "大須",
+    "memo": "",
+    "genre": "",
+    "url": "",
+    "hours": "",
+    "lat": 35.15921399490841,
+    "lng": 136.90381050109866,
+    "created_at": "2025-04-05T09:31:13.126Z"
+  }
+},
+{
+  "model": "map.favorite",
+  "pk": 36,
+  "fields": {
+    "user": 4,
+    "custom_map": "l5f4bp3l",
+    "created_at": "2025-04-05T10:54:40.950Z"
+  }
+},
+{
+  "model": "map.favorite",
+  "pk": 38,
+  "fields": {
+    "user": 4,
+    "custom_map": "cifc0wsr",
+    "created_at": "2025-04-05T10:54:43.968Z"
+  }
+},
+{
+  "model": "map.favorite",
+  "pk": 39,
+  "fields": {
+    "user": 4,
+    "custom_map": "mpxj2er6",
+    "created_at": "2025-04-05T10:54:45.609Z"
+  }
+},
+{
+  "model": "map.like",
+  "pk": 17,
+  "fields": {
+    "user": 4,
+    "custom_map": "l5f4bp3l",
+    "created_at": "2025-04-05T10:54:41.721Z"
+  }
+},
+{
+  "model": "map.like",
+  "pk": 18,
+  "fields": {
+    "user": 4,
+    "custom_map": "rd5fv9ci",
+    "created_at": "2025-04-05T10:54:43.280Z"
+  }
+},
+{
+  "model": "map.like",
+  "pk": 19,
+  "fields": {
+    "user": 4,
+    "custom_map": "cifc0wsr",
+    "created_at": "2025-04-05T10:54:44.616Z"
+  }
+},
+{
+  "model": "map.like",
+  "pk": 20,
+  "fields": {
+    "user": 4,
+    "custom_map": "mpxj2er6",
+    "created_at": "2025-04-05T10:54:46.399Z"
+  }
+},
+{
+  "model": "accounts.userprofile",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "profile_image": "profile_images/猿アイコン_PwBKSCk.png"
+  }
+},
+{
+  "model": "accounts.userprofile",
+  "pk": 2,
+  "fields": {
+    "user": 2,
+    "profile_image": ""
+  }
+},
+{
+  "model": "accounts.userprofile",
+  "pk": 3,
+  "fields": {
+    "user": 3,
+    "profile_image": ""
+  }
+},
+{
+  "model": "accounts.userprofile",
+  "pk": 4,
+  "fields": {
+    "user": 4,
+    "profile_image": ""
+  }
+}
+]

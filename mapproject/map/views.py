@@ -3,15 +3,16 @@ import random
 import string
 import json
 from django.urls import reverse  # ← これを先頭で追加！
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_POST
 from django.http import HttpResponseForbidden
-from django.shortcuts import render, redirect, get_object_or_404
 import xml.etree.ElementTree as ET
 from django.db.models import Q
 from django.http import JsonResponse
-from .models import CustomMap, Spot
+from .models import CustomMap, Spot, Favorite, Like
 # from django.http import HttpResponse
 # from django.core.management import call_command
 # from django.http import HttpResponse
@@ -38,6 +39,39 @@ from .models import CustomMap, Spot
 # @login_required
 
 @login_required
+# def map_view(request, map_id):
+#     try:
+#         custom_map = CustomMap.objects.get(id=map_id)
+#     except CustomMap.DoesNotExist:
+#         return HttpResponseForbidden("このマップは存在しません。")
+
+#     # 自分のマップか、公開されているものだけ表示OK
+#     if custom_map.user != request.user and not custom_map.is_public:
+#         return HttpResponseForbidden("このマップにはアクセスできません。")
+
+#     spots = Spot.objects.filter(map=custom_map)
+#     other_maps = CustomMap.objects.filter(user=request.user, is_system_default=False).exclude(id=map_id)
+
+#     is_owner = custom_map.user == request.user
+    
+#     return render(request, 'map/map.html', {
+#         'custom_map': custom_map,
+#         'spots': spots,
+#         'map_id': map_id,
+#         'other_maps': other_maps,
+
+#         # 'username': request.user.username, # <-この１行を追加
+#         'username': custom_map.user.username,  
+
+#         'email': request.user.email,  # ←★追加
+#         'display_map_name': custom_map.name,        # ← ここを追加
+#         # 'is_owner': custom_map.user == request.user,
+#         'is_owner': is_owner,
+#         'is_recommend_view': not is_owner,
+#         'is_default': False,  
+#     })
+# ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+
 def map_view(request, map_id):
     try:
         custom_map = CustomMap.objects.get(id=map_id)
@@ -49,40 +83,85 @@ def map_view(request, map_id):
         return HttpResponseForbidden("このマップにはアクセスできません。")
 
     spots = Spot.objects.filter(map=custom_map)
-    other_maps = CustomMap.objects.filter(user=request.user, is_system_default=False).exclude(id=map_id)
+
+    # === 自分のマップ一覧（除外: システム・今開いてるマップ）
+    my_maps = CustomMap.objects.filter(user=request.user, is_system_default=False).exclude(id=map_id)
+
+    # === お気に入りの他人のマップも取得
+    favorite_maps = Favorite.objects.filter(user=request.user) \
+        .exclude(custom_map__user=request.user) \
+        .select_related('custom_map')
+
+    # すでに自分のマップ一覧にあるIDを除外（重複回避）
+    my_map_ids = set(my_maps.values_list('id', flat=True))
+    favorite_only_maps = [
+        f.custom_map for f in favorite_maps
+        if f.custom_map.id not in my_map_ids
+    ]
+
+    # 各マップに「お気に入りから追加」フラグを追加
+    for m in favorite_only_maps:
+        m.is_favorite_only = True
+
+    # my_maps にもフラグ追加（テンプレで安全に扱えるように）
+    for m in my_maps:
+        m.is_favorite_only = False
+# ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+    # 最終的に表示するマップ一覧
+    other_maps = list(my_maps) + list(favorite_only_maps)
 
     is_owner = custom_map.user == request.user
-    
+
     return render(request, 'map/map.html', {
         'custom_map': custom_map,
         'spots': spots,
         'map_id': map_id,
         'other_maps': other_maps,
 
-        # 'username': request.user.username, # <-この１行を追加
-        'username': custom_map.user.username,  
-
-        'email': request.user.email,  # ←★追加
-        'display_map_name': custom_map.name,        # ← ここを追加
-        # 'is_owner': custom_map.user == request.user,
+        'username': custom_map.user.username,
+        'email': request.user.email,
+        'display_map_name': custom_map.name,
         'is_owner': is_owner,
         'is_recommend_view': not is_owner,
-        'is_default': False,  
+        'is_default': False,
     })
+
 
 @login_required
 def default_map_view(request):
-    user_maps = CustomMap.objects.filter(user=request.user)
+    # 自分のマップ一覧（除外: システムマップ）
+    my_maps = CustomMap.objects.filter(user=request.user, is_system_default=False)
+
+    # お気に入り登録した他人のマップを取得
+    favorite_maps = Favorite.objects.filter(user=request.user) \
+        .exclude(custom_map__user=request.user) \
+        .select_related('custom_map')
+
+    my_map_ids = set(my_maps.values_list('id', flat=True))
+    favorite_only_maps = [
+        f.custom_map for f in favorite_maps
+        if f.custom_map.id not in my_map_ids
+    ]
+
+    # お気に入りフラグを付けておく
+    for m in favorite_only_maps:
+        m.is_favorite_only = True
+    for m in my_maps:
+        m.is_favorite_only = False
+
+    other_maps = list(my_maps) + list(favorite_only_maps)
+
     return render(request, 'map/map.html', {
-        'custom_map': None,        # 表示されるマップ名は空
-        'map_id': '',              # map_id が空 → JS側で「デフォルトモード」だと判定
-        'other_maps': user_maps,   # サイドバーに表示するマイマップ一覧
-        'username': request.user.username,          # ← ユーザー名を渡す
-        'email': request.user.email,  # ←★追加
-        'display_map_name': 'ホーム',                # ← 表示用マップ名を追加
-        "is_owner": True,        # 自分のマップなので、true
-        "is_default": True,     # デフォルトモードなので、true
+        'custom_map': None,
+        'map_id': '',
+        'other_maps': other_maps,
+        'username': request.user.username,
+        'email': request.user.email,
+        'display_map_name': 'ホーム',
+        "is_owner": True,
+        "is_default": True,
     })
+
 
 
 
@@ -103,6 +182,18 @@ def create_map_ajax(request):
         CustomMap.objects.create(id=map_id, name=name, user=request.user)
         return JsonResponse({'status': 'ok', 'map_id': map_id})
 
+@require_POST
+@login_required
+def delete_map(request, map_id):
+    map_obj = get_object_or_404(CustomMap, id=map_id, user=request.user)
+
+    if map_obj.is_system_default:
+        return JsonResponse({'error': 'デフォルトマップは削除できません'}, status=403)
+
+    map_obj.delete()
+    return JsonResponse({'status': 'deleted'})
+
+
 def recommended_maps_view(request):
     query = request.GET.get('q', '')
     maps = CustomMap.objects.filter(is_recommended=True, is_public=True)
@@ -118,15 +209,23 @@ def recommended_maps_view(request):
         'maps': maps,
         'query': query
     })
-
+@login_required
 def recommended_maps_json(request):
     maps = CustomMap.objects.filter(is_recommended=True, is_public=True)
+    user = request.user
+    favorites = Favorite.objects.filter(user=user)
+    liked_map_ids = Like.objects.filter(user=user).values_list('custom_map_id', flat=True)
+    favorite_map_ids = favorites.values_list('custom_map_id', flat=True)
+
     data = [
         {
             'id': m.id,
             'name': m.name,
             'genre': m.genre,
             'user': m.user.username,
+            'likes' : m.likes.count(),
+            'is_favorite': m.id in favorite_map_ids,
+            'is_liked': m.id in liked_map_ids,
         }
         for m in maps
     ]
@@ -364,3 +463,39 @@ def kml_upload_view(request):
     return redirect(reverse("map:default_map"))
 
 
+
+
+# ----------------------------------------------------------------------------
+# favorite button
+
+@csrf_exempt
+@login_required
+def toggle_favorite_map(request, map_id):
+    map_obj = get_object_or_404(CustomMap, id=map_id, is_public=True)
+    fav, created = Favorite.objects.get_or_create(user=request.user, custom_map=map_obj)
+    if not created:
+        fav.delete()
+        return JsonResponse({'status': 'removed'})
+    return JsonResponse({'status': 'added'})
+
+@csrf_exempt
+@login_required
+def toggle_like_map(request, map_id):
+    map_obj = get_object_or_404(CustomMap, id=map_id, is_public=True)
+    like, created = Like.objects.get_or_create(user=request.user, custom_map=map_obj)
+    if not created:
+        like.delete()
+        count = Like.objects.filter(custom_map=map_obj).count()
+        return JsonResponse({'status': 'removed', 'count': count})
+    count = Like.objects.filter(custom_map=map_obj).count()
+    return JsonResponse({'status': 'liked', 'count': count})
+
+
+@login_required
+def get_liked_favorite_info(request):
+    favorites = Favorite.objects.filter(user=request.user).values_list('custom_map_id', flat=True)
+    likes = Like.objects.values('custom_map').annotate(count=models.Count('id'))
+    return JsonResponse({
+        'favorites': list(favorites),
+        'likes': {l['custom_map']: l['count'] for l in likes}
+    })

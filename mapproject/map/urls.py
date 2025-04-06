@@ -15,6 +15,7 @@ urlpatterns = [
 
     path('create/', views.create_map, name='create_map'),
     path('create/ajax/', views.create_map_ajax, name='create_map_ajax'),
+    path('<str:map_id>/delete/', views.delete_map, name='delete_map'),
 
     path("upload-kml/", views.kml_upload_view, name="upload_kml"),
 
@@ -27,5 +28,10 @@ urlpatterns = [
     path('<str:map_id>/update_settings/', views.update_map_settings, name='update_map_settings'),
     path('recommendations/', views.recommended_maps_view, name='recommended_maps'),
     path('recommendations/json/', views.recommended_maps_json, name='recommended_maps_json'),
+
+    # urls.py
+    path("<str:map_id>/like/", views.toggle_like_map, name="like_map"),
+    path("<str:map_id>/favorite/", views.toggle_favorite_map, name="favorite_map"),
+    path("mapinfo/", views.get_liked_favorite_info, name="mapinfo"),
 
 ]

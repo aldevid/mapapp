@@ -94,6 +94,12 @@
       <div style="margin-bottom: 10px;">
         <button id="show-create-map-form" style="width: 100%;">+ 新しいマップを作成</button>
       </div>
+      <!-- 🔽 新規追加：削除モード切り替えボタン -->
+      <div style="margin-bottom: 10px;">
+        <button id="delete-map-mode-toggle" style="width: 100%; background-color: #ffe5e5; color: #a00;">
+          マップを削除
+        </button>
+      </div>
       
       <!-- 作成フォーム -->
       <div id="create-map-form" style="display: none; margin-bottom: 15px;">
@@ -109,15 +115,25 @@
         </div>
         {% endif %}      
       </div>
-      
+                  
       <!-- マイマップ一覧 -->
       {% for m in other_maps %}
-      {% if m.name != "デフォルト保存スポット" %}
-      <a href="{% url 'map:map_view' m.id %}" class="map-card">{{ m.name }}</a>
-      {% endif %}
+        {% if m.name != "デフォルト保存スポット" %}
+        <div class="map-card-wrapper" data-map-id="{{ m.id }}">
+          <div class="map-card-header">
+            <a href="{% url 'map:map_view' m.id %}" class="map-card">{{ m.name }}</a>
+            
+            {% if m.is_favorite_only %}
+              <button class="unfavorite-map-btn" data-map-id="{{ m.id }}">🤍</button>
+            {% elif not m.is_system_default %}
+              <button class="delete-map-btn" style="display: none;">×</button>
+            {% endif %}
+          </div>
+        </div>        
+        {% endif %}
       {% empty %}
-      <p>他にマップはありません</p>
-      {% endfor %}
+        <p>作成したマップはありません</p>
+      {% endfor %}      
     </div>
   </div>
 
@@ -128,12 +144,18 @@
     <button id="close-sidebar-btn">×</button>
 
     <div id="mymap-name">
-     {% if is_recommend_view %}
-       おすすめマップ「{{ display_map_name }}」
-     {% else %}
-       {{ username }}のマップ「{{ display_map_name }}」
-     {% endif %}
+      <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <img src="{% static 'images/recomap_logo_white.png' %}" alt="icon" style="width: 40px; height: 30px;">
+        <span>
+          {% if is_recommend_view %}
+            おすすめマップ「{{ display_map_name }}」
+          {% else %}
+            {{ username }}のマップ「{{ display_map_name }}」
+          {% endif %}
+        </span>
+      </div>
     </div>
+    
 
 
 

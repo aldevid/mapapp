@@ -370,3 +370,40 @@ html, body {
   margin-left: 8px;
   font-weight: bold;
 }
+
+
+/* --------------------------------------------- */
+.recommend-map-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #ddd;
+  padding: 8px 0;
+}
+
+.map-info {
+  flex-grow: 1;
+}
+
+.map-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.favorite-btn, .like-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.favorite-btn.active {
+  color: red;
+}
+
+.like-btn.active {
+  color: #2196f3;
+}
