@@ -19,12 +19,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.core.management import call_command
+from django.http import HttpResponse
 
 urlpatterns = [
     path('', lambda request: redirect('map/', permanent=False)),  # ← これを追加
     path('admin/', admin.site.urls),
     path('map/', include('map.urls')),
     path('accounts/', include('accounts.urls')),
+    path('load-data/', lambda request: (call_command('loaddata', 'data.json'), HttpResponse("Data loaded."))[1]),
 ]
 
 # 開発環境でのメディアファイル配信
